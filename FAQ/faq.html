@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Character Encoding -->
+    <meta charset="UTF-8">
+    
+    <!-- Viewport Settings (Responsive Design) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Title -->
+    <title>MCZIEHOSTING - FAQ</title>
+    
+    <!-- Meta Description (SEO & Social Sharing) -->
+    <meta name="description" content="Frequently asked questions about MCZIEHOSTING Minecraft server hosting. Learn about server specifications, vCores, RAM, and more.">
+    
+    <!-- Keywords -->
+    <meta name="keywords" content="Minecraft hosting FAQ, server vCores, Minecraft RAM, server specifications, Mczie Hosting questions">
+    
+    <!-- Author -->
+    <meta name="author" content="MCZIEHOSTING">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="MCZIEHOSTING - FAQ">
+    <meta property="og:description" content="Frequently asked questions about MCZIEHOSTING Minecraft server hosting.">
+    <meta property="og:image" content="https://mcziehost.fun//preview-image.jpg">
+    <meta property="og:url" content="https://mcziehost.fun/faq.html">
+    <meta property="og:type" content="website">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="MCZIEHOSTING - FAQ">
+    <meta name="twitter:description" content="Frequently asked questions about MCZIEHOSTING Minecraft server hosting.">
+    <meta name="twitter:image" content="https://mcziehost.fun//preview-image.jpg">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="stylesheet" href="/FAQ/style.css">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
+</head>
+
+<body>
+    <!-- FAQ Header Section -->
+    <header class="faq-header">
+        <h1>MCZIE HOSTING FAQ</h1>
+        <p>Gain insights into how server units function, including the significance of vCores and RAM. Understand whether additional vCores are necessary when expanding your player base and if a higher specifications plan is advisable for managing a large server.</p>
+    </header>
+
+    <!-- FAQ Content Section -->
+    <section class="faq-content">
+        <h2>Frequently Asked Questions</h2>
+
+        <div class="faq-item animate__animated animate__fadeInUp">
+            <h3>How do server units work in hosting Minecraft servers?</h3>
+            <p>In Minecraft server hosting, there are three key factors to consider: CPU or vCores, RAM capacity, and storage. These components work together to ensure that you and your players can connect seamlessly in a Minecraft world.</p>
+        </div>
+
+        <div class="faq-item animate__animated animate__fadeInUp">
+            <h3>Do I need more vCores if I am planning to expand my player base?</h3>
+            <p>It depends. More players mean more chunk generation, so additional vCores can help with chunk loading. However, sometimes 2 or 3 vCores may be sufficient, with plugins like "Chunky" assisting in chunk generation.</p>
+        </div>
+
+        <div class="faq-item animate__animated animate__fadeInUp">
+            <h3>If I am going to run a large player base Minecraft server, is having a higher specifications plan better?</h3>
+            <p>Yes, it is important. The server primarily uses only one vCore for game logic and player actions, but a higher clock speed and modern CPU are crucial for handling large player bases efficiently.</p>
+        </div>
+
+        <div class="faq-item animate__animated animate__fadeInUp">
+            <h3>How crucial is having more RAM?</h3>
+            <p>The amount of RAM depends on the number of players and plugins. More RAM provides headroom for players, reducing lag and ensuring smoother gameplay.</p>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact">
+        <h2>Contact Us</h2>
+        <p>For any questions or further details regarding the FAQ, feel free to contact our support team. Thank you for choosing Mczie Hosting Philippines!</p>
+        <p>We look forward to supporting your Minecraft hosting needs.</p>
+    </section>
+
+    <!-- Footer Section -->
+    <footer>
+        <div class="footer">
+            <!-- Social Media Links -->
+            <div class="row">
+                <a href="https://web.facebook.com/mczhs?_rdc=1&_rdr#" title="Visit our Facebook page"><i class="fab fa-facebook"></i></a>
+                <a href="https://discord.com/invite/mczie" title="Join us on Discord"><i class="fab fa-discord"></i></a>
+                <a href="https://www.youtube.com/@MczieHostPH" title="Watch our videos on YouTube"><i class="fab fa-youtube"></i></a>
+                <a href="https://www.tiktok.com/@mcziehostphilippines" title="Follow us on TikTok"><i class="fab fa-tiktok"></i></a>
+            </div>
+            
+            <!-- Navigation Links -->
+            <div class="row">
+                <ul>
+                    <li><a href="https://web.facebook.com/mczhs?_rdc=1&_rdr#" title="Contact us page">Contact us</a></li>
+                    <li><a href="#" title="Our services page">Our Services</a></li>
+                    <li><a href="#" title="Privacy policy page">Privacy Policy</a></li>
+                    <li><a href="#" title="Terms and conditions page">Terms & Conditions</a></li>
+                    <li><a href="#" title="Career opportunities page">Career</a></li>
+                </ul>
+            </div>
+            
+            <!-- Copyright Section -->
+            <div class="row">
+                MCZIEHOSTING Copyright © 2023-2025 Mczie Hosting. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        function toggleMenu() {
+            const hamburger = document.querySelector('.hamburger');
+            const mobileMenu = document.getElementById('mobileMenu');
+            
+            hamburger.classList.toggle('open');
+            mobileMenu.classList.toggle('mobile-nav-active');
+            
+            // Animate menu items when opening
+            if (mobileMenu.classList.contains('mobile-nav-active')) {
+                const items = mobileMenu.querySelectorAll('li');
+                items.forEach(item => {
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateX(0)';
+                });
+            }
+        }
+        
+        // Add animation class when scrolling
+        document.addEventListener('DOMContentLoaded', function() {
+            const animateElements = document.querySelectorAll('.animate__animated');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const animation = entry.target.getAttribute('data-animate') || 'fadeInUp';
+                        entry.target.classList.add(`animate__${animation}`);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+            
+            animateElements.forEach(element => {
+                observer.observe(element);
+            });
+        });
+    </script>
+</body>
+</html>
