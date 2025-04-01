@@ -1,0 +1,61 @@
+# BEGIN .htaccess
+
+# Enable URL rewriting
+RewriteEngine On
+
+# Redirect from non-www to www (if you want to force the use of www in your URLs)
+RewriteCond %{HTTP_HOST} ^mcziehost\.fun [NC]
+RewriteRule ^(.*)$ http://www.mcziehost.fun/$1 [L,R=301]
+
+# Force HTTPS (if you have an SSL certificate)
+RewriteCond %{HTTPS} off
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Redirect .html extension URLs to remove the extension for cleaner URLs
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([a-zA-Z0-9_-]+)$ $1.html [L]
+
+# Allow access to CSS, JavaScript, and image files from /img, /css, /js directories
+RewriteRule ^(img|css|js)/(.*)$ $1/$2 [L]
+
+# Prevent directory browsing
+Options -Indexes
+
+# Set default file (main.html) as the first file to load when the user visits the root
+DirectoryIndex main.html index.html
+
+# Cache static files (images, CSS, JS) for a period to speed up loading
+<FilesMatch "\.(jpg|jpeg|png|gif|css|js|woff|woff2|ttf|svg|eot|otf|webp)$">
+    Header set Cache-Control "max-age=31536000, public"
+</FilesMatch>
+
+# Compress text files (CSS, JS, HTML)
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/x-javascript
+    AddOutputFilterByType DEFLATE text/javascript
+</IfModule>
+
+# Enable browser caching for images
+<IfModule mod_headers.c>
+    <FilesMatch "\.(jpg|jpeg|png|gif|svg|webp|bmp)$">
+        Header set Cache-Control "max-age=31536000, public"
+    </FilesMatch>
+</IfModule>
+
+# Disable .htaccess access for security reasons
+<Files .htaccess>
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+# Disable PHP in specific directories (like img, js, and css)
+<Directory "/path/to/your/images/directory">
+    php_flag engine off
+</Directory>
+
+# END .htaccess
