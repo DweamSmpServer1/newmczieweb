@@ -1,0 +1,719 @@
+/* ===== GLOBAL STYLES ===== */
+:root {
+    --primary: #ff6b9e;  /* Pink primary color */
+    --secondary: #ff1493; /* Deep pink */
+    --dark: #121212;
+    --darker: #0a0a0a;
+    --light: #f8f8f8;
+    --accent: #ff1493;
+    --accent-hover: #ff3d77;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: var(--dark);
+    color: white;
+    line-height: 1.6;
+    overflow-x: hidden;
+    padding-top: 80px;
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* ===== HEADER SECTION ===== */
+header {
+    background: linear-gradient(135deg, #ff9a9e, #fad0c4, #ff9a9e);
+    background-size: 300% 300%;
+    padding: 60px 20px;
+    text-align: center;
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.4);
+    animation: gradientShift 8s ease infinite, fadeIn 1s ease-in-out;
+    position: relative;
+    overflow: hidden;
+}
+
+header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 70% 30%, rgba(255,255,255,0.1) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+/* Logo */
+.logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 10px;
+    animation: slideDown 0.8s ease-out;
+}
+
+.logo-container img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 3px solid white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    animation: pulse 2s infinite ease-in-out;
+}
+
+/* Official Text Styling */
+.official-text {
+    font-size: 14px;
+    font-weight: 500;
+    margin-top: 10px;
+    color: rgba(255,255,255,0.9);
+    text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.brand-name {
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 5px;
+    text-transform: uppercase;
+    color: white;
+    letter-spacing: 1px;
+}
+
+/* Company Name */
+h1.logo-text {
+    font-size: 42px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: white;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    margin: 0;
+}
+
+/* Tagline */
+p.tagline {
+    font-size: 18px;
+    margin-top: 10px;
+    opacity: 0.95;
+    font-weight: 500;
+}
+
+/* ===== NAVIGATION BAR ===== */
+nav {
+    background: rgba(30, 30, 30, 0.95);
+    padding: 15px 0;
+    box-shadow: 0px 4px 15px rgba(0,0,0,0.4);
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+/* Navbar Container */
+.nav-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    padding: 0 20px;
+}
+
+/* ===== DESKTOP NAVIGATION ===== */
+.nav-links {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-links li {
+    display: inline;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 10px 18px;
+    border-radius: 8px;
+    background: rgba(34, 34, 34, 0.7);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+    overflow: hidden;
+}
+
+.nav-links a::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background: var(--primary);
+    transition: width 0.3s ease;
+}
+
+.nav-links a:hover::before {
+    width: 100%;
+}
+
+.nav-links a i {
+    color: var(--primary);
+    font-size: 18px;
+    transition: all 0.3s ease;
+}
+
+.nav-links a:hover {
+    background: rgba(255, 107, 158, 0.1);
+    transform: translateY(-2px);
+}
+
+.nav-links a:hover i {
+    transform: scale(1.2);
+}
+
+/* ===== HAMBURGER MENU (For Mobile) ===== */
+.hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 6px;
+    cursor: pointer;
+    position: absolute;
+    left: 20px;
+    z-index: 1100;
+    padding: 10px;
+}
+
+.hamburger span {
+    width: 30px;
+    height: 3px;
+    background: white;
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
+
+/* Animate hamburger into "X" when menu is active */
+.hamburger.open span:nth-child(1) {
+    transform: translateY(9px) rotate(45deg);
+}
+
+.hamburger.open span:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger.open span:nth-child(3) {
+    transform: translateY(-9px) rotate(-45deg);
+}
+
+/* ===== MOBILE NAVIGATION ===== */
+.mobile-nav-links {
+    display: none;
+    flex-direction: column;
+    background: rgba(20, 20, 20, 0.98);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    position: fixed;
+    top: 70px;
+    left: 0;
+    width: 100%;
+    height: calc(100vh - 70px);
+    align-items: center;
+    justify-content: flex-start;
+    padding: 30px 0;
+    text-align: center;
+    transform: translateX(-100%);
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    z-index: 1000;
+    border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+/* Show menu when active */
+.mobile-nav-links.mobile-nav-active {
+    transform: translateX(0);
+}
+
+.mobile-nav-links li {
+    width: 85%;
+    max-width: 300px;
+    margin-bottom: 15px;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all 0.4s ease;
+}
+
+.mobile-nav-links.mobile-nav-active li {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.mobile-nav-links li:nth-child(1) { transition-delay: 0.1s; }
+.mobile-nav-links li:nth-child(2) { transition-delay: 0.15s; }
+.mobile-nav-links li:nth-child(3) { transition-delay: 0.2s; }
+.mobile-nav-links li:nth-child(4) { transition-delay: 0.25s; }
+.mobile-nav-links li:nth-child(5) { transition-delay: 0.3s; }
+.mobile-nav-links li:nth-child(6) { transition-delay: 0.35s; }
+
+.mobile-nav-links a {
+    color: white;
+    font-size: 18px;
+    font-weight: 500;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 15px 20px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.05);
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.mobile-nav-links a i {
+    font-size: 20px;
+    color: var(--primary);
+    margin-right: 15px;
+    transition: all 0.3s ease;
+}
+
+.mobile-nav-links a:hover {
+    background: rgba(255, 107, 158, 0.15);
+    transform: translateX(5px);
+}
+
+.mobile-nav-links a:hover i {
+    transform: scale(1.1);
+    color: var(--secondary);
+}
+
+/* ===== PROFESSIONAL HARDWARE SERVERS SECTION ===== */
+.minecraft-plans {
+    padding: 60px 20px;
+    background: linear-gradient(to bottom, var(--dark), var(--darker));
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.minecraft-plans::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path fill="rgba(255,107,158,0.03)" d="M0,0 L100,0 L100,100 Q50,80 0,100 Z"></path></svg>');
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    opacity: 0.5;
+    z-index: 0;
+}
+
+.minecraft-plans h2 {
+    font-size: 42px;
+    color: white;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 1;
+    font-weight: 700;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+.minecraft-plans h2::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(to right, var(--primary), var(--secondary));
+    margin: 15px auto;
+    border-radius: 2px;
+}
+
+.minecraft-description {
+    max-width: 900px;
+    margin: 0 auto 40px;
+    font-size: 18px;
+    color: rgba(255,255,255,0.8);
+    line-height: 1.7;
+    position: relative;
+    z-index: 1;
+}
+
+.minecraft-description strong {
+    color: white;
+    font-weight: 600;
+}
+
+/* Order Now Button */
+.order-btn {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    padding: 16px 40px;
+    font-size: 18px;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 20px 0 40px;
+    box-shadow: 0 4px 15px rgba(255, 107, 158, 0.3);
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.order-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--secondary), var(--primary));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+}
+
+.order-btn:hover::before {
+    opacity: 1;
+}
+
+.order-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(255, 107, 158, 0.4);
+}
+
+.order-btn:active {
+    transform: translateY(1px);
+}
+
+/* Plans Container */
+.plans-container {
+    max-width: 1200px;
+    margin: 0 auto 60px;
+    position: relative;
+    z-index: 1;
+}
+
+.section-title {
+    font-size: 32px;
+    color: white;
+    margin-bottom: 15px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+.section-title i {
+    color: var(--primary);
+}
+
+.plan-subtext {
+    font-size: 16px;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 30px;
+    font-style: italic;
+}
+
+/* Plan Grid */
+.plan-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-top: 30px;
+}
+
+/* Plan Card */
+.plan-card {
+    background: rgba(30, 30, 30, 0.7);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    transition: all 0.4s ease;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border: 1px solid rgba(255,255,255,0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.plan-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(to right, var(--primary), var(--secondary));
+}
+
+.plan-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+    border-color: rgba(255, 107, 158, 0.3);
+}
+
+.plan-card img {
+    max-width: 120px;
+    height: auto;
+    margin-bottom: 20px;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+    transition: all 0.3s ease;
+}
+
+.plan-card:hover img {
+    transform: scale(1.1);
+    filter: drop-shadow(0 6px 12px rgba(0,0,0,0.4));
+}
+
+.plan-card h4 {
+    font-size: 24px;
+    color: white;
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+.plan-card p {
+    font-size: 15px;
+    color: rgba(255,255,255,0.8);
+    margin-bottom: 20px;
+    line-height: 1.7;
+}
+
+.plan-card p br {
+    display: block;
+    content: '';
+    margin: 10px 0;
+}
+
+.price {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--primary);
+    margin: 25px 0 0;
+    display: block;
+    text-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+
+/* ===== FOOTER ===== */
+footer {
+    background: linear-gradient(to bottom, #0a0a0a, #000);
+    padding: 50px 0 20px;
+    font-family: 'Poppins', sans-serif;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(to right, var(--primary), var(--secondary));
+}
+
+.footer .row {
+    width: 100%;
+    margin: 1% 0%;
+    padding: 0.6% 0%;
+    color: rgba(255,255,255,0.7);
+    font-size: 0.9em;
+    position: relative;
+    z-index: 1;
+}
+
+.footer .row a {
+    text-decoration: none;
+    color: rgba(255,255,255,0.7);
+    transition: all 0.3s ease;
+}
+
+.footer .row a:hover {
+    color: var(--primary);
+}
+
+.footer .row ul {
+    width: 100%;
+    padding: 0;
+    margin: 20px 0;
+    list-style: none;
+}
+
+.footer .row ul li {
+    display: inline-block;
+    margin: 0px 25px;
+    position: relative;
+}
+
+.footer .row ul li::after {
+    content: '•';
+    position: absolute;
+    right: -30px;
+    color: rgba(255,255,255,0.3);
+}
+
+.footer .row ul li:last-child::after {
+    display: none;
+}
+
+.footer .row a i {
+    font-size: 24px;
+    margin: 0 15px;
+    transition: all 0.3s ease;
+}
+
+.footer .row a:hover i {
+    transform: translateY(-5px) scale(1.2);
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 1200px) {
+    .plan-grid {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 25px;
+    }
+}
+
+@media (max-width: 992px) {
+    .minecraft-plans h2,
+    .section-title {
+        font-size: 36px;
+    }
+    
+    .plan-card {
+        padding: 25px;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        padding-top: 70px;
+    }
+    
+    header {
+        padding: 50px 20px;
+    }
+    
+    h1.logo-text {
+        font-size: 36px;
+    }
+    
+    .nav-links {
+        display: none;
+    }
+
+    .hamburger {
+        display: flex;
+    }
+    
+    .minecraft-plans {
+        padding: 50px 20px;
+    }
+    
+    .minecraft-plans h2,
+    .section-title {
+        font-size: 32px;
+    }
+    
+    .plan-grid {
+        grid-template-columns: 1fr;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+    
+    .footer .row ul li {
+        margin: 0px 15px;
+    }
+    
+    .footer .row ul li::after {
+        right: -20px;
+    }
+}
+
+@media (max-width: 576px) {
+    h1.logo-text {
+        font-size: 30px;
+    }
+    
+    .logo-container img {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .tagline {
+        font-size: 16px;
+    }
+    
+    .official-text, .brand-name {
+        font-size: 14px;
+    }
+    
+    .minecraft-plans h2,
+    .section-title {
+        font-size: 28px;
+    }
+    
+    .plan-card h4 {
+        font-size: 22px;
+    }
+    
+    .footer .row ul li {
+        display: block;
+        margin: 15px 0;
+    }
+    
+    .footer .row ul li::after {
+        display: none;
+    }
+}
