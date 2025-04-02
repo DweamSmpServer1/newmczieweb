@@ -783,54 +783,91 @@ class MCZIEChatWidget {
     generateResponse(message) {
         const cleanMsg = message.toLowerCase();
         
-        // Greetings
+        // 🎉 Randomized Greetings
         if (/(hi|hello|hey|greetings)/i.test(cleanMsg)) {
-            return "Hello there! 👋 How can I help you with your Minecraft server today? Feel free to ask anything!";
+            const greetings = [
+                "Hello there! 👋 How can I assist you with your Minecraft server today?",
+                "Hey! 😊 What do you need help with?",
+                "Hi there! 🚀 Need plugin suggestions or server setup help?",
+                "Greetings, adventurer! 🏰 How can I help with your server?",
+                "Yo! 🤙 What's up? Need anything for your Minecraft world?",
+                "Hey there! 🎮 Ready to make your server awesome? Let me know how I can help!"
+            ];
+            return greetings[Math.floor(Math.random() * greetings.length)];
         }
         
-        // Plans
+        // Hosting Plans
         if (/(plan|price|cost|package|tier|pricing)/i.test(cleanMsg)) {
             return `We have a variety of hosting plans tailored to your needs:<br><br>
-                <div class="plan-option">
-                    <strong>Budget Plan</strong> (₱80/month)<br>
-                    <small>Xeon E5-2650 V4 • DDR4 2133Mhz</small>
-                </div>
-                <div class="plan-option">
-                    <strong>Enterprise Plan</strong> (₱130/month)<br>
-                    <small>Xeon E5-2698 V3 • DDR4 2666Mhz</small>
-                </div>
-                <div class="plan-option">
-                    <strong>Professional Plan</strong> (₱250/month)<br>
-                    <small>Ryzen 7 2700X • DDR4 3200Mhz</small>
-                </div>
+                <div class="plan-option"><strong>Budget Plan</strong> (₱80/month)<br>
+                    <small>Xeon E5-2650 V4 • DDR4 2133Mhz</small></div>
+                <div class="plan-option"><strong>Enterprise Plan</strong> (₱130/month)<br>
+                    <small>Xeon E5-2698 V3 • DDR4 2666Mhz</small></div>
+                <div class="plan-option"><strong>Professional Plan</strong> (₱250/month)<br>
+                    <small>Ryzen 7 2700X • DDR4 3200Mhz</small></div>
                 <a href="/available/Pricing-Plans.html" class="btn-in-chat">Explore All Plans</a>`;
         }
         
         // Setup Instructions
         if (/(setup|install|start|begin|configure)/i.test(cleanMsg)) {
-            return `Getting your server up and running is a breeze! Follow these simple steps:<br><br>
+            return `Getting your server up and running is a breeze! Follow these steps:<br><br>
                 1. Check your email for login credentials.<br>
                 2. Access your <a href="https://srv.mcziehost.fun:8443" target="_blank">control panel</a>.<br>
                 3. Follow our detailed <a href="/index.html">setup guide</a>.<br><br>
-                If you need assistance, <button class="quick-action-btn" data-question="I need setup help">click here</button> for support.`;
+                Need help? <button class="quick-action-btn" data-question="I need setup help">Click here</button>`;
         }
-        
-        // Support Options
-        if (/(support|help|issue|problem|assistance|question)/i.test(cleanMsg)) {
-            return `We're here to help! You can reach us through any of these channels:<br><br>
-                <div class="support-option">
-                    <i class="fab fa-discord"></i> <strong>Discord:</strong> 
-                    <a href="https://discord.com/invite/mczie" target="_blank">Join our community</a>
-                </div>
-                <div class="support-option">
-                    <i class="fab fa-facebook"></i> <strong>Facebook:</strong> 
-                    <a href="https://web.facebook.com/mczhs" target="_blank">Message us</a>
-                </div>`;
+    
+        // 🔥 Performance Plugins
+        if (/performance|lag|optimize/i.test(cleanMsg)) {
+            return `🚀 **Performance Optimization Plugins**:<br>
+                - 🛠️ <a href="https://www.spigotmc.org/resources/spark.57242/" target="_blank"><strong>Spark</strong></a> (Performance profiling & monitoring)<br>
+                - 🧹 <a href="https://www.spigotmc.org/resources/clearlagg.68271/" target="_blank"><strong>ClearLag</strong></a> (Removes unnecessary entities to reduce lag)<br>
+                - 🌍 <a href="https://www.spigotmc.org/resources/chunky.81534/" target="_blank"><strong>Chunky</strong></a> (Efficient world pre-loading to reduce lag)`;
         }
-        
-        // Fallback Response
-        return "Hmm, I didn’t quite catch that. Could you please rephrase your question about your Minecraft server?";
-    }
+    
+        // 💰 Economy Plugins
+        if (/economy|money|shop/i.test(cleanMsg)) {
+            return `💰 **Economy Plugins for Your Server**:<br>
+                - 🏦 <a href="https://www.spigotmc.org/resources/essentialsx.9089/" target="_blank"><strong>EssentialsX</strong></a> (Core economy commands & features)<br>
+                - 💳 <a href="https://www.spigotmc.org/resources/vault.34315/" target="_blank"><strong>Vault</strong></a> (Economy API for other plugins)<br>
+                - 🛍️ <a href="https://www.spigotmc.org/resources/shopguiplus.6515/" target="_blank"><strong>ShopGUIPlus</strong></a> (GUI-based player shop system)`;
+        }
+    
+        // 🛡️ Protection Plugins
+        if (/protection|anti-grief|security/i.test(cleanMsg)) {
+            return `🛡️ **Protection & Anti-Griefing Plugins**:<br>
+                - 🔒 <a href="https://www.spigotmc.org/resources/worldguard.18911/" target="_blank"><strong>WorldGuard</strong></a> (Protects land & areas from griefing)<br>
+                - 📜 <a href="https://www.spigotmc.org/resources/coreprotect.8631/" target="_blank"><strong>CoreProtect</strong></a> (Logs block changes & rollbacks)<br>
+                - 🏡 <a href="https://www.spigotmc.org/resources/griefprevention.1884/" target="_blank"><strong>GriefPrevention</strong></a> (Players can claim land to prevent griefing)`;
+        }
+    
+        // ⚔️ PvP Plugins
+        if (/pvp|combat|battle/i.test(cleanMsg)) {
+            return `⚔️ **PvP & Combat Plugins**:<br>
+                - 🏹 <a href="https://www.spigotmc.org/resources/duels.20171/" target="_blank"><strong>Duels</strong></a> (Organized 1v1 battles)<br>
+                - ⚔️ <a href="https://www.spigotmc.org/resources/advancedclans.71765/" target="_blank"><strong>AdvancedClans</strong></a> (Factions-based PvP system)<br>
+                - ⛔ <a href="https://www.spigotmc.org/resources/worldguard.18911/" target="_blank"><strong>WorldGuard</strong></a> (Create PvP-enabled/disabled zones)`;
+        }
+    
+        // 🎮 Fun Plugins
+        if (/fun|customization|cosmetic/i.test(cleanMsg)) {
+            return `🎮 **Fun & Customization Plugins**:<br>
+                - ✨ <a href="https://www.spigotmc.org/resources/decentholograms.83757/" target="_blank"><strong>DecentHolograms</strong></a> (Floating text displays)<br>
+                - 🎨 <a href="https://www.spigotmc.org/resources/itemsadder.73355/" target="_blank"><strong>ItemsAdder</strong></a> (Adds custom items & cosmetics)<br>
+                - 🐉 <a href="https://www.spigotmc.org/resources/mythicmobs.5702/" target="_blank"><strong>MythicMobs</strong></a> (Create custom mobs & bosses)`;
+        }
+    
+        // Randomized Fallback Responses
+    const fallbackMessages = [
+        "Hmm, I didn’t quite catch that. Could you rephrase?",
+        "I'm not sure I understand. Could you provide more details?",
+        "That’s an interesting question! Could you clarify what you mean?"
+    ];
+    
+    return fallbackMessages[Math.floor(Math.random() * fallbackMessages.length)];
+}
+    
+    
     
 
     scrollToBottom() {
