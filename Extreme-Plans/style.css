@@ -273,7 +273,7 @@ nav {
 }
 
 /* Show menu when active */
-.mobile-nav-links.mobile-nav-active {
+.mobile-nav-links.active {
     transform: translateX(0);
 }
 
@@ -286,7 +286,7 @@ nav {
     transition: all 0.4s ease;
 }
 
-.mobile-nav-links.mobile-nav-active li {
+.mobile-nav-links.active li {
     opacity: 1;
     transform: translateX(0);
 }
@@ -328,6 +328,21 @@ nav {
 .mobile-nav-links a:hover i {
     transform: scale(1.1);
     color: var(--secondary);
+}
+
+/* Media Queries for Mobile */
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+    }
+    
+    .hamburger {
+        display: flex;
+    }
+    
+    .mobile-nav-links {
+        display: flex;
+    }
 }
 
 /* ===== EXTREME CUTTING-EDGE HARDWARE SECTION ===== */
