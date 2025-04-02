@@ -9,6 +9,15 @@ class QuantumAI {
         this.memory = [];
         this.serverKnowledge = this.loadServerKnowledge();
         this.conversationContext = [];
+        this.commonWords = ["the", "and", "for", "your", "with"];
+        this.pluginDatabase = {
+            performance: ["Spark", "ClearLag", "Chunky"],
+            economy: ["EssentialsX", "Vault", "ShopGUIPlus"],
+            protection: ["WorldGuard", "CoreProtect", "GriefPrevention"],
+            fun: ["DecentHolograms", "ItemsAdder", "MythicMobs"]
+        };
+        this.nlpProcessor = { detectIntent: () => 'greeting' }; // Placeholder if not defined elsewhere
+        
         this.init();
     }
 
@@ -251,56 +260,55 @@ class QuantumAI {
     loadServerKnowledge() {
         return {
             plans: {
-                description: "MCZIE Hosting offers a range of Minecraft server plans, each designed to cater to different needs, from small groups to large-scale servers.",
+                description: "MCZIE Hosting offers tiered Minecraft server plans",
                 tiers: [
                     {
                         name: "Budget Plan",
                         price: "₱80/month",
                         specs: "Xeon E5-2650 V4 • DDR4 2133Mhz",
-                        bestFor: "Small groups of friends, testing, or light use."
+                        bestFor: "Small friend groups, testing"
                     },
                     {
                         name: "Enterprise Plan",
                         price: "₱130/month",
                         specs: "Xeon E5-2698 V3 • DDR4 2666Mhz",
-                        bestFor: "Medium-sized communities, running modpacks, and more demanding use cases."
+                        bestFor: "Medium communities, modpacks"
                     },
                     {
                         name: "Professional Plan",
                         price: "₱250/month",
                         specs: "Ryzen 7 2700X • DDR4 3200Mhz",
-                        bestFor: "Large servers, performance-intensive setups, and high-player capacity."
+                        bestFor: "Large servers, performance needs"
                     },
                     {
                         name: "Extreme Plan",
                         price: "₱350/month",
                         specs: "Ryzen 9 5950X • DDR4 3200Mhz",
-                        bestFor: "Massive networks, competitive play, and extreme performance needs."
+                        bestFor: "Massive networks, competitive play"
                     }
                 ],
-                notes: "All plans come with robust DDoS protection, instant server setup, and top-tier security."
+                notes: "All plans include DDoS protection and instant setup"
             },
             features: [
-                "🔒 300Gbps+ DDoS Protection for peace of mind.",
-                "🚀 Instant Server Deployment to get you started fast.",
-                "📂 Full FTP Access for complete control over your files.",
-                "🧩 Modpack Support for customized gameplay.",
-                "👨‍💻 24/7 Monitoring to ensure optimal server performance.",
-                "💬 Dedicated Discord Support for quick help."
+                "300Gbps+ DDoS Protection",
+                "Instant Server Deployment",
+                "Full FTP Access",
+                "Modpack Support",
+                "24/7 Monitoring",
+                "Discord Support"
             ],
             commonIssues: {
-                setup: "📧 Check your email for login credentials and follow the setup instructions to access your control panel.",
-                performance: "⚙️ Try optimizing server settings like view-distance and entity-activation-range for smoother performance.",
-                connection: "🌐 Double-check your IP address and port settings in your server.properties file to ensure proper connection."
+                setup: "Check your email for credentials and access the control panel",
+                performance: "Try optimizing view-distance and entity-activation-range",
+                connection: "Verify your IP and port settings in server.properties"
             }
         };
     }
-    
 
     generateKnowledgeResponse(topic) {
         const knowledge = this.serverKnowledge[topic];
         if (!knowledge) return null;
-    
+        
         switch (topic) {
             case "plans":
                 const planCards = knowledge.tiers.map(plan => `
@@ -308,10 +316,10 @@ class QuantumAI {
                         <h4>${plan.name}</h4>
                         <div class="price">${plan.price}</div>
                         <div class="specs">${plan.specs}</div>
-                        <div class="best-for">Best for: <strong>${plan.bestFor}</strong></div>
+                        <div class="best-for">Best for: ${plan.bestFor}</div>
                     </div>
                 `).join("");
-    
+                
                 return `
                     <div class="knowledge-response">
                         <h3>${knowledge.description}</h3>
@@ -320,45 +328,259 @@ class QuantumAI {
                         <a href="/available/Pricing-Plans.html" class="btn-in-chat">Compare All Plans</a>
                     </div>
                 `;
-    
+                
             case "features":
                 return `
                     <div class="knowledge-response">
                         <h3>MCZIE Hosting Features</h3>
                         <ul class="feature-list">
-                            ${knowledge.features.map(f => `<li>✔️ ${f}</li>`).join("")}
+                            ${knowledge.features.map(f => `<li>${f}</li>`).join("")}
                         </ul>
-                        <p>${this.getMoodResponse()} Need more details on any specific feature? Feel free to ask!</p>
+                        <p>${this.getMoodResponse()} Need details on any specific feature?</p>
                     </div>
                 `;
-    
+                
             case "commonIssues":
                 return `
                     <div class="knowledge-response">
-                        <h3>Common Server Issues & Solutions</h3>
+                        <h3>Common Server Solutions</h3>
                         <div class="issue">
-                            <h4>🔧 Setup Problems</h4>
+                            <h4>Setup Problems</h4>
                             <p>${knowledge.setup}</p>
                         </div>
                         <div class="issue">
-                            <h4>⚡ Performance Issues</h4>
+                            <h4>Performance Issues</h4>
                             <p>${knowledge.performance}</p>
                         </div>
                         <div class="issue">
-                            <h4>🌐 Connection Troubles</h4>
+                            <h4>Connection Troubles</h4>
                             <p>${knowledge.connection}</p>
                         </div>
                         <button class="quick-action-btn" data-question="I need more help">
-                            Still Having Trouble? Get More Help
+                            Still Having Trouble?
                         </button>
                     </div>
                 `;
-    
+                
             default:
                 return null;
         }
     }
-}    
+
+    recommendPlugins(serverType, needs) {
+        if (!Array.isArray(needs)) {
+            needs = [needs]; // Convert single string to array
+        }
+
+        const recommendations = [];
+        needs.forEach(need => {
+            const lowerNeed = need.toLowerCase();
+            for (const [category, plugins] of Object.entries(this.pluginDatabase)) {
+                if (category.toLowerCase().includes(lowerNeed)) {
+                    recommendations.push(...plugins);
+                }
+            }
+        });
+
+        // Remove duplicates
+        const uniqueRecommendations = [...new Set(recommendations)];
+
+        return uniqueRecommendations.length > 0 
+            ? `For ${serverType}, consider these plugins: ${uniqueRecommendations.join(", ")}`
+            : "I couldn't find specific plugin recommendations for your needs. Could you describe what you're trying to achieve?";
+    }
+
+    troubleshootIssue(errorLog) {
+        if (!errorLog || typeof errorLog !== 'string') {
+            return {
+                detectedError: "Invalid input",
+                solution: "Please provide the actual error message",
+                additionalHelp: null
+            };
+        }
+
+        const commonIssues = {
+            "java.lang.OutOfMemoryError": {
+                solution: "Increase RAM allocation in your server settings",
+                action: "Would you like me to show you how to increase RAM allocation?"
+            },
+            "Can't keep up": {
+                solution: "Try optimizing with plugins like Spark or reducing view-distance",
+                action: "I can guide you through server optimization steps"
+            },
+            "Failed to bind to port": {
+                solution: "Check if another service is using the same port (like another server)",
+                action: "Would you like help checking port usage?"
+            },
+            "Connection refused": {
+                solution: "Verify your server IP and port are correct in server.properties",
+                action: "I can help you verify your server configuration"
+            }
+        };
+
+        for (const [error, data] of Object.entries(commonIssues)) {
+            if (errorLog.includes(error)) {
+                return {
+                    detectedError: error,
+                    solution: data.solution,
+                    additionalHelp: data.action
+                };
+            }
+        }
+
+        // Check for common patterns if exact match not found
+        if (/memory/i.test(errorLog)) {
+            return {
+                detectedError: "Memory-related issue",
+                solution: "This appears to be memory-related. Try increasing RAM or optimizing plugins.",
+                additionalHelp: "Would you like memory optimization tips?"
+            };
+        }
+
+        return {
+            detectedError: "Unknown error",
+            solution: "I couldn't identify this specific error. Please contact support with the full log.",
+            additionalHelp: "Would you like me to connect you to live support?"
+        };
+    }
+
+    learnFromInteraction(userInput, correctResponse) {
+        if (!userInput || !correctResponse) return;
+        
+        try {
+            const learnedResponses = JSON.parse(localStorage.getItem('learnedResponses') || "{}");
+            
+            // Improved keyword extraction
+            const keywords = userInput.toLowerCase().match(/\b[\w']+\b/g) || [];
+            const filteredKeywords = keywords.filter(word => 
+                word.length > 3 && 
+                !this.commonWords.includes(word) &&
+                !/\d+/.test(word)
+            );
+            
+            filteredKeywords.forEach(keyword => {
+                if (!learnedResponses[keyword]) {
+                    learnedResponses[keyword] = [];
+                }
+                // Don't store duplicates
+                if (!learnedResponses[keyword].includes(correctResponse)) {
+                    learnedResponses[keyword].push(correctResponse);
+                }
+            });
+            
+            localStorage.setItem('learnedResponses', JSON.stringify(learnedResponses));
+        } catch (e) {
+            console.error("Failed to save learned response:", e);
+        }
+    }
+
+    getLearnedResponse(input) {
+        try {
+            const learnedResponses = JSON.parse(localStorage.getItem('learnedResponses') || "{}");
+            const keywords = (input.toLowerCase().match(/\b[\w']+\b/g) || [])
+                .filter(word => learnedResponses[word]);
+                
+            if (keywords.length > 0) {
+                // Sort by most relevant (most matches)
+                const keywordCounts = {};
+                keywords.forEach(keyword => {
+                    keywordCounts[keyword] = (keywordCounts[keyword] || 0) + 1;
+                });
+                
+                const sortedKeywords = Object.keys(keywordCounts)
+                    .sort((a, b) => keywordCounts[b] - keywordCounts[a]);
+                
+                for (const keyword of sortedKeywords) {
+                    const possibleResponses = learnedResponses[keyword];
+                    if (possibleResponses && possibleResponses.length > 0) {
+                        return possibleResponses[Math.floor(Math.random() * possibleResponses.length)];
+                    }
+                }
+            }
+        } catch (e) {
+            console.error("Failed to retrieve learned response:", e);
+        }
+        return null;
+    }
+
+    detectLanguage(text) {
+        if (!text || typeof text !== 'string') return 'english';
+        
+        const languageIndicators = {
+            english: ["the", "and", "you", "server", "minecraft"],
+            tagalog: ["ang", "ng", "mga", "ako", "mo"],
+            spanish: ["el", "la", "que", "tu", "servidor"]
+        };
+
+        const scores = {};
+        const cleanText = text.toLowerCase();
+        
+        Object.entries(languageIndicators).forEach(([lang, words]) => {
+            scores[lang] = words.reduce((count, word) => 
+                count + (cleanText.includes(word) ? 1 : 0), 0);
+        });
+
+        // Only return a language if we have reasonable confidence
+        const maxScore = Math.max(...Object.values(scores));
+        if (maxScore >= 2) {
+            return Object.keys(scores).find(key => scores[key] === maxScore);
+        }
+        return 'english';
+    }
+
+    getLocalizedResponse(message, language = null) {
+        if (!language) {
+            language = this.detectLanguage(message);
+        }
+
+        const responses = {
+            greeting: {
+                english: "Hello! How can I help with your Minecraft server today?",
+                tagalog: "Kumusta! Paano ako makakatulong sa iyong Minecraft server ngayon?",
+                spanish: "¡Hola! ¿Cómo puedo ayudarte con tu servidor de Minecraft hoy?"
+            },
+            plans: {
+                english: "We offer several hosting plans to suit your needs...",
+                tagalog: "Mayroon kaming iba't ibang hosting plan para sa iyong pangangailangan...",
+                spanish: "Ofrecemos varios planes de hosting para satisfacer sus necesidades..."
+            },
+            support: {
+                english: "I can help you with server support issues...",
+                tagalog: "Maaari kitang tulungan sa mga isyu ng suporta sa server...",
+                spanish: "Puedo ayudarte con problemas de soporte del servidor..."
+            }
+        };
+
+        const intent = this.nlpProcessor.detectIntent(message);
+        return responses[intent]?.[language] || 
+               responses[intent]?.english || 
+               "I'm here to help with your Minecraft server. Could you please rephrase your question?";
+    }
+}
+
+// Example usage (you can remove this in production)
+const ai = new QuantumAI();
+
+// Plugin recommendations
+const plugins = ai.recommendPlugins("Faction server", ["protection", "economy"]);
+console.log(plugins);
+
+// Troubleshooting
+const solution = ai.troubleshootIssue("java.lang.OutOfMemoryError: Java heap space");
+console.log(solution);
+
+// Learning system
+ai.learnFromInteraction("How to increase RAM", "You can increase RAM in your server settings...");
+const learnedResponse = ai.getLearnedResponse("increase RAM");
+console.log(learnedResponse);
+
+// Language detection
+const language = ai.detectLanguage("¿Cómo configuro mi servidor?");
+console.log(language); // "spanish"
+const response = ai.getLocalizedResponse("Hello", "tagalog");
+console.log(response);
+
+
 
 // MCZIE Hosting Chat Widget Controller
 class MCZIEChatWidget {
