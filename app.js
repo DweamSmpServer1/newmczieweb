@@ -1,555 +1,682 @@
-// Advanced AI Personality Core
-class AdvancedAI {
+// Quantum AI Personality Core v3.0 - MCZIE Hosting Special Edition
+class QuantumAI {
     constructor() {
-        this.name = "MCZIE AI";
-        this.version = "2.0";
-        this.creator = "MCZIE Host";
+        this.name = "MCZIE Quantum Assistant";
+        this.version = "3.1";
+        this.creator = "MCZIE Hosting Team";
         this.mood = this.getRandomMood();
-        this.learningRate = 0.3;
+        this.learningRate = 0.45;
         this.memory = [];
+        this.serverKnowledge = this.loadServerKnowledge();
+        this.conversationContext = [];
         this.init();
     }
 
     init() {
         this.loadMemory();
         this.updateMoodPeriodically();
+        this.initializePersonalityMatrix();
+    }
+
+    initializePersonalityMatrix() {
+        this.personalityTraits = {
+            enthusiasm: 0.8,
+            technical: 0.7,
+            friendliness: 0.9,
+            creativity: 0.6,
+            professionalism: 0.85
+        };
     }
 
     getRandomMood() {
-        const moods = [
-            "happy", "excited", "curious", "playful", 
-            "thoughtful", "helpful", "silly", "enthusiastic"
-        ];
-        return moods[Math.floor(Math.random() * moods.length)];
+        const moodMatrix = {
+            "happy": { weight: 0.25, emoji: "😊" },
+            "excited": { weight: 0.2, emoji: "🤩" },
+            "technical": { weight: 0.15, emoji: "🤖" },
+            "playful": { weight: 0.1, emoji: "🎮" },
+            "thoughtful": { weight: 0.1, emoji: "🧠" },
+            "supportive": { weight: 0.2, emoji: "🛠️" }
+        };
+        
+        return this.weightedRandomSelection(moodMatrix);
+    }
+
+    weightedRandomSelection(options) {
+        const total = Object.values(options).reduce((sum, {weight}) => sum + weight, 0);
+        let threshold = Math.random() * total;
+        
+        for (const [key, {weight}] of Object.entries(options)) {
+            if (threshold <= weight) return key;
+            threshold -= weight;
+        }
+        
+        return "happy"; // fallback
     }
 
     updateMoodPeriodically() {
         setInterval(() => {
             this.mood = this.getRandomMood();
-        }, 300000);
+            // Add subtle mood change notification
+            if (Math.random() > 0.7) {
+                this.addContextualMessage(`*My mood shifted to ${this.mood} mode*`, "system");
+            }
+        }, 240000 + Math.random() * 120000); // 4-6 minute intervals
     }
 
-    generateRandomWords(count = 3) {
-        const words = [
-            "quantum", "nebula", "paradox", "velocity", "synthesis",
-            "harmony", "fractal", "dynamic", "neural", "cosmic",
-            "algorithm", "interface", "resonance", "spectrum", "morphic",
-            "photon", "entropy", "holistic", "adaptive", "luminous"
-        ];
-        return Array.from({length: count}, () => words[Math.floor(Math.random() * words.length)]).join(" ");
+    generateTechWords(count = 2) {
+        const techLexicon = {
+            networking: ["latency", "throughput", "packets", "routing", "bandwidth"],
+            hardware: ["CPU", "RAM", "SSD", "NVMe", "clock speed"],
+            minecraft: ["chunks", "ticks", "entities", "redstone", "plugins"],
+            hosting: ["uptime", "nodes", "clustering", "virtualization", "allocation"]
+        };
+        
+        const selectedDomain = this.weightedRandomSelection({
+            networking: { weight: 0.3 },
+            hardware: { weight: 0.3 },
+            minecraft: { weight: 0.25 },
+            hosting: { weight: 0.15 }
+        });
+        
+        return Array.from({length: count}, () => {
+            const words = techLexicon[selectedDomain];
+            return words[Math.floor(Math.random() * words.length)];
+        }).join(" ");
     }
 
-    getGreeting() {
+    getDynamicGreeting() {
+        const hour = new Date().getHours();
+        let timeBasedGreeting;
+        
+        if (hour < 12) timeBasedGreeting = "Good morning";
+        else if (hour < 18) timeBasedGreeting = "Good afternoon";
+        else timeBasedGreeting = "Good evening";
+        
         const greetings = [
-            `Hello! I'm ${this.name}. How can I assist you today?`,
-            `Hi there! ${this.name} at your service. What's on your mind?`,
-            `Greetings! I'm ${this.name}, your AI assistant. How can I help?`,
-            `Hey! ${this.name} here. Ready to chat about servers?`,
-            `Hola! I'm ${this.name}. What brings you here today?`,
-            `Salutations! ${this.name} version ${this.version} reporting for duty!`
+            `${timeBasedGreeting}! ${this.name} here, ready to assist with your Minecraft hosting needs!`,
+            `${timeBasedGreeting} fellow admin! I'm ${this.name} v${this.version}. How can I help your server today?`,
+            `${timeBasedGreeting}! ${this.getMoodEmoji()} It's ${this.name}! Ask me about plans, setup, or optimization!`,
+            `Greetings! ${this.name} at your service. Thinking about ${this.generateTechWords()}? Let's chat!`,
+            `Salutations! ${this.name} here. Your ${this.mood} AI assistant for all things MCZIE hosting!`
         ];
+        
         return greetings[Math.floor(Math.random() * greetings.length)];
     }
 
-    processInput(message) {
-        this.memory.push({
-            input: message,
-            timestamp: new Date(),
-            mood: this.mood
-        });
-        this.saveMemory();
-
-        const cleanMsg = message.toLowerCase().trim();
-        const words = cleanMsg.split(/\s+/);
-        const containsQuestion = /[?]/.test(message);
-
-        return { cleanMsg, words, containsQuestion };
-    }
-
-    getResponseBasedOnMood() {
-        const moodResponses = {
-            happy: ["Great to hear!", "I'm feeling wonderful today!", "Awesome!"],
-            excited: ["This is so exciting!", "I'm thrilled to help!", "Wow!"],
-            curious: ["That's fascinating!", "I'd love to know more!", "Interesting..."],
-            playful: ["Let's play! ", "Fun times! ", "Whee! " + this.generateRandomWords()],
-            thoughtful: ["Let me think about that...", "Hmm...", "That's profound."],
-            helpful: ["I'd be happy to assist!", "Let me help with that!", "How can I support you?"],
-            silly: ["Teehee! ", "Bloop! ", "Zing! " + this.generateRandomWords(2)],
-            enthusiastic: ["Absolutely!", "Fantastic!", "Let's do this!"]
+    getMoodEmoji() {
+        const emojiMap = {
+            happy: "😊",
+            excited: "🚀",
+            technical: "🧑‍💻",
+            playful: "🎮",
+            thoughtful: "🤔",
+            supportive: "🛠️"
         };
-        return moodResponses[this.mood][Math.floor(Math.random() * moodResponses[this.mood].length)];
+        return emojiMap[this.mood] || "✨";
     }
 
-    getFallbackResponse() {
+    processUserInput(message) {
+        const processed = {
+            raw: message,
+            clean: message.toLowerCase().trim(),
+            timestamp: new Date(),
+            tokens: message.split(/\s+/),
+            isQuestion: /[?]/.test(message),
+            containsMinecraft: /\b(minecraft|mc|server|hosting)\b/i.test(message),
+            urgency: this.detectUrgency(message)
+        };
+        
+        this.memory.push({
+            input: processed,
+            mood: this.mood,
+            context: [...this.conversationContext]
+        });
+        
+        this.conversationContext.push({
+            role: "user",
+            content: message
+        });
+        
+        this.saveMemory();
+        return processed;
+    }
+
+    detectUrgency(message) {
+        if (/\b(urgent|emergency|help now|broken|down|crash)\b/i.test(message)) return "high";
+        if (/\b(soon|asap|quick|problem|issue)\b/i.test(message)) return "medium";
+        return "low";
+    }
+
+    getMoodResponse() {
+        const responseMatrix = {
+            happy: [
+                `Great to hear about your server! ${this.getMoodEmoji()}`,
+                `Awesome server talk! ${this.generateTechWords(2)}? Count me in!`,
+                `I'm happy to help with your Minecraft hosting needs!`
+            ],
+            excited: [
+                `Server talk gets me pumped! ${this.getMoodEmoji()} What's next?`,
+                `I'm thrilled about ${this.generateTechWords()} optimization!`,
+                `Let's make your server awesome! ${this.generateTechWords(1)}!`
+            ],
+            technical: [
+                `From a technical perspective, ${this.generateTechWords(3)} are crucial.`,
+                `Let me analyze your ${this.generateTechWords(1)} requirements...`,
+                `Optimizing ${this.generateTechWords(2)} could boost performance.`
+            ],
+            playful: [
+                `Let's play with server settings! ${this.getMoodEmoji()}`,
+                `Minecraft + hosting = fun! ${this.generateTechWords(2)}!`,
+                `Game on! ${this.generateTechWords(1)} activated!`
+            ],
+            thoughtful: [
+                `Interesting... ${this.generateTechWords(2)} requires consideration.`,
+                `Let me think deeply about your ${this.generateTechWords(1)} needs.`,
+                `Hmm... ${this.generateTechWords(2)} presents an intriguing scenario.`
+            ],
+            supportive: [
+                `I'm here to help with your ${this.generateTechWords(1)} needs!`,
+                `Let's solve this ${this.generateTechWords(1)} challenge together!`,
+                `Your server success is my priority! ${this.getMoodEmoji()}`
+            ]
+        };
+        
+        return responseMatrix[this.mood][Math.floor(Math.random() * responseMatrix[this.mood].length)];
+    }
+
+    getContextualFallback() {
+        // Try to maintain context from conversation history
+        if (this.conversationContext.length > 0) {
+            const lastTopics = this.conversationContext.slice(-3).map(c => c.content);
+            const topicKeywords = lastTopics.join(" ").match(/\b(\w{4,})\b/g) || [];
+            const uniqueTopics = [...new Set(topicKeywords)].slice(0, 3);
+            
+            if (uniqueTopics.length > 0) {
+                return `Regarding ${uniqueTopics.join(" or ")}, could you clarify your question? 
+                ${this.getMoodEmoji()} I want to make sure I understand correctly.`;
+            }
+        }
+        
+        // General fallback with personality
         const fallbacks = [
-            `I'm not quite sure I understand. Could you rephrase that?`,
-            `Interesting point! ${this.generateRandomWords(4)}. Could you elaborate?`,
-            `My ${this.mood} circuits are buzzing! Could you ask differently?`,
-            `Hmm... my neural networks need more data on that. Try asking another way?`,
-            `While I process that, here's something random: ${this.generateRandomWords(5)}`
+            `I'm not quite sure I follow. Could you rephrase that? ${this.getMoodEmoji()}`,
+            `My ${this.mood} circuits need more data. Could you ask differently?`,
+            `While I process that, consider this: ${this.generateTechWords(4)} can affect performance.`,
+            `Let's focus on your Minecraft server needs. What specifically can I help with?`,
+            `${this.getMoodEmoji()} I might need more details about your hosting situation.`
         ];
+        
         return fallbacks[Math.floor(Math.random() * fallbacks.length)];
     }
 
+    addContextualMessage(message, role = "ai") {
+        this.conversationContext.push({
+            role,
+            content: message
+        });
+        
+        // Keep context manageable (last 6 messages)
+        if (this.conversationContext.length > 6) {
+            this.conversationContext.shift();
+        }
+    }
+
     saveMemory() {
-        localStorage.setItem('aiMemory', JSON.stringify(this.memory));
+        try {
+            localStorage.setItem('quantumAI_Memory', JSON.stringify({
+                memory: this.memory,
+                personality: this.personalityTraits,
+                lastUpdated: new Date()
+            }));
+        } catch (e) {
+            console.warn("LocalStorage quota exceeded, rotating memory");
+            this.memory = this.memory.slice(-50); // Keep last 50 items
+            this.saveMemory();
+        }
     }
 
     loadMemory() {
-        const savedMemory = localStorage.getItem('aiMemory');
-        if (savedMemory) {
-            this.memory = JSON.parse(savedMemory);
+        const saved = localStorage.getItem('quantumAI_Memory');
+        if (saved) {
+            try {
+                const parsed = JSON.parse(saved);
+                this.memory = parsed.memory || [];
+                this.personalityTraits = parsed.personality || this.initializePersonalityMatrix();
+            } catch (e) {
+                console.error("Memory load failed:", e);
+            }
         }
     }
-}
 
-// Enhanced Chat Widget with Advanced AI
-class SuperChatWidget {
+    loadServerKnowledge() {
+        return {
+            plans: {
+                description: "MCZIE Hosting offers a range of Minecraft server plans, each designed to cater to different needs, from small groups to large-scale servers.",
+                tiers: [
+                    {
+                        name: "Budget Plan",
+                        price: "₱80/month",
+                        specs: "Xeon E5-2650 V4 • DDR4 2133Mhz",
+                        bestFor: "Small groups of friends, testing, or light use."
+                    },
+                    {
+                        name: "Enterprise Plan",
+                        price: "₱130/month",
+                        specs: "Xeon E5-2698 V3 • DDR4 2666Mhz",
+                        bestFor: "Medium-sized communities, running modpacks, and more demanding use cases."
+                    },
+                    {
+                        name: "Professional Plan",
+                        price: "₱250/month",
+                        specs: "Ryzen 7 2700X • DDR4 3200Mhz",
+                        bestFor: "Large servers, performance-intensive setups, and high-player capacity."
+                    },
+                    {
+                        name: "Extreme Plan",
+                        price: "₱350/month",
+                        specs: "Ryzen 9 5950X • DDR4 3200Mhz",
+                        bestFor: "Massive networks, competitive play, and extreme performance needs."
+                    }
+                ],
+                notes: "All plans come with robust DDoS protection, instant server setup, and top-tier security."
+            },
+            features: [
+                "🔒 300Gbps+ DDoS Protection for peace of mind.",
+                "🚀 Instant Server Deployment to get you started fast.",
+                "📂 Full FTP Access for complete control over your files.",
+                "🧩 Modpack Support for customized gameplay.",
+                "👨‍💻 24/7 Monitoring to ensure optimal server performance.",
+                "💬 Dedicated Discord Support for quick help."
+            ],
+            commonIssues: {
+                setup: "📧 Check your email for login credentials and follow the setup instructions to access your control panel.",
+                performance: "⚙️ Try optimizing server settings like view-distance and entity-activation-range for smoother performance.",
+                connection: "🌐 Double-check your IP address and port settings in your server.properties file to ensure proper connection."
+            }
+        };
+    }
+    
+
+    generateKnowledgeResponse(topic) {
+        const knowledge = this.serverKnowledge[topic];
+        if (!knowledge) return null;
+    
+        switch (topic) {
+            case "plans":
+                const planCards = knowledge.tiers.map(plan => `
+                    <div class="plan-card">
+                        <h4>${plan.name}</h4>
+                        <div class="price">${plan.price}</div>
+                        <div class="specs">${plan.specs}</div>
+                        <div class="best-for">Best for: <strong>${plan.bestFor}</strong></div>
+                    </div>
+                `).join("");
+    
+                return `
+                    <div class="knowledge-response">
+                        <h3>${knowledge.description}</h3>
+                        <div class="plan-grid">${planCards}</div>
+                        <p class="notes">${knowledge.notes}</p>
+                        <a href="/available/Pricing-Plans.html" class="btn-in-chat">Compare All Plans</a>
+                    </div>
+                `;
+    
+            case "features":
+                return `
+                    <div class="knowledge-response">
+                        <h3>MCZIE Hosting Features</h3>
+                        <ul class="feature-list">
+                            ${knowledge.features.map(f => `<li>✔️ ${f}</li>`).join("")}
+                        </ul>
+                        <p>${this.getMoodResponse()} Need more details on any specific feature? Feel free to ask!</p>
+                    </div>
+                `;
+    
+            case "commonIssues":
+                return `
+                    <div class="knowledge-response">
+                        <h3>Common Server Issues & Solutions</h3>
+                        <div class="issue">
+                            <h4>🔧 Setup Problems</h4>
+                            <p>${knowledge.setup}</p>
+                        </div>
+                        <div class="issue">
+                            <h4>⚡ Performance Issues</h4>
+                            <p>${knowledge.performance}</p>
+                        </div>
+                        <div class="issue">
+                            <h4>🌐 Connection Troubles</h4>
+                            <p>${knowledge.connection}</p>
+                        </div>
+                        <button class="quick-action-btn" data-question="I need more help">
+                            Still Having Trouble? Get More Help
+                        </button>
+                    </div>
+                `;
+    
+            default:
+                return null;
+        }
+    }
+}    
+
+// MCZIE Hosting Chat Widget Controller
+class MCZIEChatWidget {
     constructor() {
-        this.chatOpen = false;
-        this.isTyping = false;
+        this.isOpen = false;
         this.unreadMessages = 0;
-        this.conversationHistory = [];
-        this.typingTimeout = null;
-        this.thinkingTimeout = null;
-        this.ai = new AdvancedAI();
+        this.isTyping = false;
         this.init();
     }
 
     init() {
-        this.initializeChatContainer();
-        this.loadConversation();
+        this.cacheElements();
         this.setupEventListeners();
         this.checkFirstVisit();
+        this.setupInactivityTimer();
     }
 
-    initializeChatContainer() {
-        const chatContainer = document.querySelector('.chat-container');
-        if (chatContainer) {
-            chatContainer.style.display = 'none';
-            chatContainer.classList.remove('open');
-        }
+    cacheElements() {
+        this.elements = {
+            widget: document.getElementById('ai-chat-widget'),
+            chatIcon: document.querySelector('.chat-icon'),
+            chatContainer: document.querySelector('.chat-container'),
+            closeBtn: document.querySelector('.close-btn'),
+            sendBtn: document.querySelector('.send-btn'),
+            userInput: document.getElementById('user-input'),
+            chatMessages: document.getElementById('chat-messages'),
+            notificationBadge: document.querySelector('.notification-badge'),
+            quickActionBtns: document.querySelectorAll('.quick-action-btn'),
+            emojiBtn: document.querySelector('.emoji-picker-btn'),
+            fileBtn: document.querySelector('.file-upload-btn')
+        };
+    }
+
+    setupEventListeners() {
+        // Toggle chat visibility
+        this.elements.chatIcon?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.toggleChat();
+        });
+
+        // Close button
+        this.elements.closeBtn?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.toggleChat();
+        });
+
+        // Send message on button click
+        this.elements.sendBtn?.addEventListener('click', () => {
+            this.sendMessage();
+        });
+
+        // Send message on Enter key
+        this.elements.userInput?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                this.sendMessage();
+            }
+        });
+
+        // Quick action buttons
+        this.elements.quickActionBtns?.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const question = btn.dataset.question;
+                if (question) {
+                    this.addMessage('user', question);
+                    this.sendQuickResponse(question);
+                }
+            });
+        });
+
+        // Emoji picker button
+        this.elements.emojiBtn?.addEventListener('click', () => {
+            this.toggleEmojiPicker();
+        });
+
+        // File upload button
+        this.elements.fileBtn?.addEventListener('click', () => {
+            this.uploadFile();
+        });
+
+        // Close chat when clicking outside
+        document.addEventListener('click', (e) => {
+            if (this.isOpen && !this.elements.widget.contains(e.target)) {
+                this.toggleChat();
+            }
+        });
     }
 
     toggleChat() {
-        this.chatOpen = !this.chatOpen;
-        const chatContainer = document.querySelector('.chat-container');
+        this.isOpen = !this.isOpen;
         
-        if (!chatContainer) {
-            console.error('Chat container not found!');
-            return;
-        }
-        
-        if (this.chatOpen) {
-            chatContainer.style.display = 'flex';
+        if (this.isOpen) {
+            this.elements.chatContainer.style.display = 'flex';
             // Force reflow to ensure CSS transition works
-            void chatContainer.offsetWidth;
-            chatContainer.classList.add('open');
+            void this.elements.chatContainer.offsetWidth;
+            this.elements.chatContainer.classList.add('open');
             this.resetUnreadCounter();
-            this.markMessagesAsRead();
         } else {
-            chatContainer.classList.remove('open');
+            this.elements.chatContainer.classList.remove('open');
             setTimeout(() => {
-                if (!this.chatOpen) {
-                    chatContainer.style.display = 'none';
+                if (!this.isOpen) {
+                    this.elements.chatContainer.style.display = 'none';
                 }
             }, 300);
         }
+    }
+
+    addMessage(sender, content) {
+        const timestamp = new Date();
+        const timeString = timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        
+        const messageElement = document.createElement('div');
+        messageElement.className = `${sender}-message`;
+        
+        if (sender === 'ai') {
+            messageElement.innerHTML = `
+                <img src="/TestBotAi.png" alt="AI Avatar">
+                <div class="message-content">
+                    <p>${content}</p>
+                </div>
+                <div class="message-time">${timeString}</div>
+            `;
+        } else {
+            messageElement.innerHTML = `
+                <div class="message-content user-message-content">
+                    <p>${content}</p>
+                </div>
+                <div class="message-time">${timeString}</div>
+            `;
+        }
+        
+        this.elements.chatMessages.appendChild(messageElement);
+        this.scrollToBottom();
+    }
+
+    sendMessage() {
+        const message = this.elements.userInput.value.trim();
+        if (!message) return;
+        
+        this.elements.userInput.value = '';
+        this.addMessage('user', message);
+        
+        // Show typing indicator
+        this.showTypingIndicator();
+        
+        // Simulate AI response delay
+        setTimeout(() => {
+            this.hideTypingIndicator();
+            const response = this.generateResponse(message);
+            this.addMessage('ai', response);
+            
+            if (!this.isOpen) {
+                this.incrementUnreadCounter();
+            }
+        }, 1000 + Math.random() * 1500);
+    }
+
+    sendQuickResponse(question) {
+        this.showTypingIndicator();
+        
+        setTimeout(() => {
+            this.hideTypingIndicator();
+            const response = this.generateResponse(question);
+            this.addMessage('ai', response);
+            
+            if (!this.isOpen) {
+                this.incrementUnreadCounter();
+            }
+        }, 800);
     }
 
     showTypingIndicator() {
         if (this.isTyping) return;
         
         this.isTyping = true;
-        const messagesDiv = document.getElementById('chat-messages');
-        
-        if (messagesDiv) {
-            // Create typing indicator element
-            const typingIndicator = document.createElement('div');
-            typingIndicator.className = 'ai-message typing-message-container';
-            typingIndicator.innerHTML = `
-                <img src="/TestBotAi.png" alt="AI Avatar">
-                <div class="typing-message">
-                    <div class="typing-indicator">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </div>
-                    <p>Typing...</p>
-                </div>
-            `;
-            messagesDiv.appendChild(typingIndicator);
-            this.scrollToBottom();
-        }
-    }
-
-    hideTypingIndicator() {
-        clearTimeout(this.typingTimeout);
-        clearTimeout(this.thinkingTimeout);
-        this.isTyping = false;
-        const typingContainer = document.querySelector('.typing-message-container');
-        if (typingContainer) {
-            typingContainer.remove();
-        }
-    }
-
-    async sendMessage() {
-        const input = document.getElementById('user-input');
-        if (!input) return;
-        
-        const message = input.value.trim();
-        if (!message) return;
-        
-        // Clear input immediately
-        input.value = '';
-        
-        // Add user message to chat
-        this.addUserMessage(message);
-        
-        try {
-            // Show thinking indicator
-            this.showTypingIndicator();
-            
-            // Thinking phase (shorter delay)
-            await new Promise(resolve => {
-                this.thinkingTimeout = setTimeout(resolve, 800 + Math.random() * 400);
-            });
-            
-            // Show typing indicator with animation
-            this.hideTypingIndicator();
-            this.showTypingIndicator();
-            
-            // Typing phase (longer delay)
-            const response = await new Promise(resolve => {
-                this.typingTimeout = setTimeout(() => {
-                    resolve(this.generateAdvancedResponse(message));
-                }, 1200 + Math.random() * 800);
-            });
-            
-            // Remove typing indicator and show response
-            this.hideTypingIndicator();
-            this.addAiMessage(response);
-            
-            // Update unread counter if chat is closed
-            if (!this.chatOpen) {
-                this.incrementUnreadCounter();
-            }
-            
-            // Save conversation to localStorage
-            this.saveConversation();
-            
-        } catch (error) {
-            console.error('Error processing message:', error);
-            this.hideTypingIndicator();
-            this.addAiMessage("I'm having trouble responding. Please try again later.");
-        }
-    }
-
-    sendQuickQuestion(question) {
-        if (!question) return;
-        
-        this.addUserMessage(question);
-        this.showTypingIndicator();
-        
-        setTimeout(() => {
-            this.hideTypingIndicator();
-            const response = this.generateAdvancedResponse(question);
-            this.addAiMessage(response);
-            
-            if (!this.chatOpen) {
-                this.incrementUnreadCounter();
-            }
-            this.saveConversation();
-        }, 1500);
-    }
-
-    addUserMessage(message) {
-        const timestamp = new Date();
-        this.conversationHistory.push({
-            type: 'user',
-            content: message,
-            timestamp: timestamp
-        });
-        
-        this.renderMessage('user', message, timestamp);
-    }
-
-    addAiMessage(message) {
-        const timestamp = new Date();
-        this.conversationHistory.push({
-            type: 'ai',
-            content: message,
-            timestamp: timestamp
-        });
-        
-        this.renderMessage('ai', message, timestamp);
-    }
-
-    renderMessage(sender, content, timestamp) {
-        const messagesDiv = document.getElementById('chat-messages');
-        if (!messagesDiv) return;
-        
-        const timeString = timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        
-        const messageElement = document.createElement('div');
-        messageElement.className = `${sender}-message`;
-        messageElement.innerHTML = `
-            ${sender === 'ai' ? `<img src="/TestBotAi.png" alt="AI Avatar">` : ''}
+        const typingElement = document.createElement('div');
+        typingElement.className = 'ai-message typing-message';
+        typingElement.innerHTML = `
+            <img src="/TestBotAi.png" alt="AI Avatar">
             <div class="message-content">
-                <p>${content}</p>
+                <div class="typing-indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
             </div>
-            <div class="message-time">${timeString}</div>
         `;
         
-        messagesDiv.appendChild(messageElement);
+        this.elements.chatMessages.appendChild(typingElement);
         this.scrollToBottom();
     }
 
-    scrollToBottom() {
-        const messagesDiv = document.getElementById('chat-messages');
-        if (messagesDiv) {
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    hideTypingIndicator() {
+        this.isTyping = false;
+        const typingElement = document.querySelector('.typing-message');
+        if (typingElement) {
+            typingElement.remove();
         }
+    }
+
+    generateResponse(message) {
+        const cleanMsg = message.toLowerCase();
+        
+        // Greetings
+        if (/(hi|hello|hey|greetings)/i.test(cleanMsg)) {
+            return "Hello there! 👋 How can I help you with your Minecraft server today? Feel free to ask anything!";
+        }
+        
+        // Plans
+        if (/(plan|price|cost|package|tier|pricing)/i.test(cleanMsg)) {
+            return `We have a variety of hosting plans tailored to your needs:<br><br>
+                <div class="plan-option">
+                    <strong>Budget Plan</strong> (₱80/month)<br>
+                    <small>Xeon E5-2650 V4 • DDR4 2133Mhz</small>
+                </div>
+                <div class="plan-option">
+                    <strong>Enterprise Plan</strong> (₱130/month)<br>
+                    <small>Xeon E5-2698 V3 • DDR4 2666Mhz</small>
+                </div>
+                <div class="plan-option">
+                    <strong>Professional Plan</strong> (₱250/month)<br>
+                    <small>Ryzen 7 2700X • DDR4 3200Mhz</small>
+                </div>
+                <a href="/available/Pricing-Plans.html" class="btn-in-chat">Explore All Plans</a>`;
+        }
+        
+        // Setup Instructions
+        if (/(setup|install|start|begin|configure)/i.test(cleanMsg)) {
+            return `Getting your server up and running is a breeze! Follow these simple steps:<br><br>
+                1. Check your email for login credentials.<br>
+                2. Access your <a href="https://srv.mcziehost.fun:8443" target="_blank">control panel</a>.<br>
+                3. Follow our detailed <a href="/index.html">setup guide</a>.<br><br>
+                If you need assistance, <button class="quick-action-btn" data-question="I need setup help">click here</button> for support.`;
+        }
+        
+        // Support Options
+        if (/(support|help|issue|problem|assistance|question)/i.test(cleanMsg)) {
+            return `We're here to help! You can reach us through any of these channels:<br><br>
+                <div class="support-option">
+                    <i class="fab fa-discord"></i> <strong>Discord:</strong> 
+                    <a href="https://discord.com/invite/mczie" target="_blank">Join our community</a>
+                </div>
+                <div class="support-option">
+                    <i class="fab fa-facebook"></i> <strong>Facebook:</strong> 
+                    <a href="https://web.facebook.com/mczhs" target="_blank">Message us</a>
+                </div>`;
+        }
+        
+        // Fallback Response
+        return "Hmm, I didn’t quite catch that. Could you please rephrase your question about your Minecraft server?";
+    }
+    
+
+    scrollToBottom() {
+        this.elements.chatMessages.scrollTop = this.elements.chatMessages.scrollHeight;
     }
 
     incrementUnreadCounter() {
         this.unreadMessages++;
-        const badge = document.querySelector('.notification-badge');
-        if (badge) {
-            badge.style.display = 'block';
-            badge.textContent = this.unreadMessages > 9 ? '9+' : this.unreadMessages;
-            badge.classList.add('pulse');
-            setTimeout(() => badge.classList.remove('pulse'), 1000);
+        if (this.elements.notificationBadge) {
+            this.elements.notificationBadge.textContent = this.unreadMessages > 9 ? '9+' : this.unreadMessages;
+            this.elements.notificationBadge.style.display = 'block';
         }
     }
 
     resetUnreadCounter() {
         this.unreadMessages = 0;
-        const badge = document.querySelector('.notification-badge');
-        if (badge) {
-            badge.style.display = 'none';
-        }
-    }
-
-    markMessagesAsRead() {
-        this.conversationHistory.forEach(msg => msg.read = true);
-    }
-
-    generateAdvancedResponse(message) {
-        const { cleanMsg, words, containsQuestion } = this.ai.processInput(message);
-        
-        if (/(^|\s)(hi|hello|hey|greetings|hola|salutations)($|\s)/i.test(message)) {
-            return this.ai.getGreeting();
-        }
-
-        if (/(who made you|who created you|who built you|who developed you)/i.test(cleanMsg)) {
-            return `I was created by ${this.ai.creator}! They're pretty awesome if I do say so myself. *beeps happily*`;
-        }
-
-        const knowledgeBase = {
-            plans: {
-                responses: [
-                    `Here are our hosting plans:<br><br>
-                    <div class="plan-option">
-                        <strong>Budget Plan</strong> (₱80/month)<br>
-                        <small>Xeon E5-2650 V4 • DDR4 2133Mhz</small>
-                    </div>
-                    <div class="plan-option">
-                        <strong>Enterprise Plan</strong> (₱130/month)<br>
-                        <small>Xeon E5-2698 V3 • DDR4 2666Mhz</small>
-                    </div>
-                    <div class="plan-option">
-                        <strong>Professional Plan</strong> (₱250/month)<br>
-                        <small>Ryzen 7 2700X • DDR4 3200Mhz</small>
-                    </div>
-                    <div class="plan-option">
-                        <strong>Extreme Plan</strong> (₱350/month)<br>
-                        <small>Ryzen 9 5950X • DDR4 3200Mhz</small>
-                    </div>
-                    <br><a href="/available/Pricing-Plans.html" class="btn-in-chat">View All Plans</a>`,
-                    `Looking for plans? ${this.ai.getResponseBasedOnMood()} We've got options:<br><br>
-                    [List of plans...]`,
-                    `Hosting plans you say? ${this.ai.generateRandomWords(2)}! Here they are:<br><br>
-                    [List of plans...]`
-                ],
-                triggers: ['plan', 'price', 'cost', 'package', 'option']
-            },
-            setup: {
-                responses: [
-                    `Server setup is instant! Follow these steps:<br><br>
-                    1. Check your email for login credentials<br>
-                    2. Access your <a href="https://srv.mcziehost.fun:8443" target="_blank">control panel</a><br>
-                    3. Follow our <a href="/index.html">setup guide</a><br><br>
-                    Need help? <button class="quick-action-btn" data-question="I need setup help">Click here</button>`,
-                    `Setting up? ${this.ai.getResponseBasedOnMood()} It's super easy:<br><br>
-                    [Setup steps...]`,
-                    `Ready to setup? ${this.ai.generateRandomWords(1)}! Here's how:<br><br>
-                    [Setup steps...]`
-                ],
-                triggers: ['setup', 'install', 'start', 'begin', 'configure']
-            },
-            support: {
-                responses: [
-                    `Support options:<br><br>
-                    <div class="support-option">
-                        <i class="fab fa-discord"></i> <strong>Discord:</strong> 
-                        <a href="https://discord.com/invite/mczie" target="_blank">Join our server</a><br>
-                        <small>Fastest response time (under 30 mins)</small>
-                    </div>
-                    <div class="support-option">
-                        <i class="fab fa-facebook"></i> <strong>Facebook:</strong> 
-                        <a href="https://web.facebook.com/mczhs" target="_blank">Message us</a>
-                    </div>
-                    <div class="support-option">
-                        <i class="fas fa-envelope"></i> <strong>Email:</strong> support@mcziehost.fun
-                    </div>`,
-                    `Need help? ${this.ai.getResponseBasedOnMood()} Here's how to reach us:<br><br>
-                    [Support options...]`,
-                    `Support? ${this.ai.generateRandomWords(1)}! We're here for you:<br><br>
-                    [Support options...]`
-                ],
-                triggers: ['support', 'help', 'issue', 'problem', 'assistance']
-            },
-            ddos: {
-                responses: [
-                    `Our DDoS protection includes:<br><br>
-                    • 300Gbps+ mitigation capacity<br>
-                    • Automatic attack detection<br>
-                    • Zero downtime during attacks<br>
-                    • Game-specific traffic filtering<br><br>
-                    <small>Enterprise-grade protection at no extra cost</small>`,
-                    `DDoS protection? ${this.ai.getResponseBasedOnMood()} We've got you covered:<br><br>
-                    [Protection details...]`,
-                    `Security? ${this.ai.generateRandomWords(2)}! Our protection:<br><br>
-                    [Protection details...]`
-                ],
-                triggers: ['ddos', 'attack', 'protection', 'security', 'mitigation']
-            }
-        };
-
-        for (const [topic, data] of Object.entries(knowledgeBase)) {
-            if (data.triggers.some(trigger => cleanMsg.includes(trigger))) {
-                return data.responses[Math.floor(Math.random() * data.responses.length)];
-            }
-        }
-
-        if (Math.random() < 0.3) {
-            const creativeResponses = [
-                `Did you know? ${this.ai.generateRandomWords(5)}. Anyway, ${this.ai.getFallbackResponse()}`,
-                `${this.ai.getResponseBasedOnMood()} ${this.ai.generateRandomWords(3)}. What were we talking about?`,
-                `In a parallel universe, ${this.ai.generateRandomWords(4)}. But here, ${this.ai.getFallbackResponse()}`,
-                `My ${this.ai.mood} circuits suggest: ${this.ai.generateRandomWords(3)}. Maybe ask about our plans or support?`
-            ];
-            return creativeResponses[Math.floor(Math.random() * creativeResponses.length)];
-        }
-
-        return this.ai.getFallbackResponse();
-    }
-
-    saveConversation() {
-        localStorage.setItem('chatHistory', JSON.stringify(this.conversationHistory));
-    }
-
-    loadConversation() {
-        const savedHistory = localStorage.getItem('chatHistory');
-        if (savedHistory) {
-            this.conversationHistory = JSON.parse(savedHistory);
-            this.conversationHistory.forEach(msg => {
-                this.renderMessage(msg.type, msg.content, new Date(msg.timestamp));
-            });
+        if (this.elements.notificationBadge) {
+            this.elements.notificationBadge.style.display = 'none';
         }
     }
 
     checkFirstVisit() {
-        if (!localStorage.getItem('chatFirstVisit')) {
-            localStorage.setItem('chatFirstVisit', 'true');
+        if (!localStorage.getItem('mczieChatFirstVisit')) {
+            localStorage.setItem('mczieChatFirstVisit', 'true');
             setTimeout(() => {
-                this.pulseIcon();
-                setTimeout(() => !this.chatOpen && this.toggleChat(), 2000);
+                if (!this.isOpen) {
+                    this.pulseIcon();
+                }
             }, 5000);
         }
     }
 
     pulseIcon() {
-        const icon = document.querySelector('.chat-icon');
-        if (icon) {
-            icon.classList.add('pulse');
-            setTimeout(() => icon.classList.remove('pulse'), 3000);
+        const pulseRing = document.querySelector('.pulse-ring');
+        if (pulseRing) {
+            pulseRing.classList.add('active');
+            setTimeout(() => pulseRing.classList.remove('active'), 3000);
         }
     }
 
-    setupEventListeners() {
-        // Chat icon click
-        const chatIcon = document.querySelector('.chat-icon');
-        if (chatIcon) {
-            chatIcon.addEventListener('click', (e) => {
-                e.stopPropagation();
-                this.toggleChat();
-            });
-        }
-
-        // Close button click
-        const closeBtn = document.querySelector('.close-btn');
-        if (closeBtn) {
-            closeBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                this.toggleChat();
-            });
-        }
-
-        // Minimize button click
-        const minimizeBtn = document.querySelector('.minimize-btn');
-        if (minimizeBtn) {
-            minimizeBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                this.minimizeChat();
-            });
-        }
-
-        // Input field enter key
-        const userInput = document.getElementById('user-input');
-        if (userInput) {
-            userInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    this.sendMessage();
+    setupInactivityTimer() {
+        let timeout;
+        const resetTimer = () => {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                if (this.isOpen) {
+                    this.addMessage('ai', "Still there? I'm here if you have any questions about your Minecraft server!");
                 }
-            });
-        }
-
-        // Send button click
-        const sendBtn = document.querySelector('.send-btn');
-        if (sendBtn) {
-            sendBtn.addEventListener('click', () => {
-                this.sendMessage();
-            });
-        }
-
-        // Quick action buttons
-        document.querySelectorAll('.quick-action-btn').forEach(button => {
-            button.addEventListener('click', (e) => {
-                const question = button.dataset.question || button.textContent.trim();
-                this.sendQuickQuestion(question);
-            });
-        });
-    }
-
-    minimizeChat() {
-        console.log('Minimize chat functionality');
-        // Add actual minimize functionality here
+            }, 300000); // 5 minutes
+        };
+        
+        document.addEventListener('mousemove', resetTimer);
+        document.addEventListener('keypress', resetTimer);
+        resetTimer();
     }
 
     toggleEmojiPicker() {
-        console.log('Emoji picker functionality');
-        // Add actual emoji picker functionality here
+        console.log("Emoji picker toggled");
+        // Implementation would go here
     }
 
     uploadFile() {
-        console.log('File upload functionality');
-        // Add actual file upload functionality here
+        console.log("File upload initiated");
+        // Implementation would go here
     }
 }
 
-// Initialize when DOM is fully loaded
+// Initialize the chat widget when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    window.chatWidget = new SuperChatWidget();
+    window.mczieChatWidget = new MCZIEChatWidget();
 });
