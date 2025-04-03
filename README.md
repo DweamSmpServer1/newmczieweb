@@ -28,7 +28,7 @@ A massive thank you to the **McZieHosting** team for their outstanding service a
 ---
 
 ## 📜 License  
-[Specify the license for your project, e.g., MIT, GPL, etc.]  
+[MIT]  
 
 ## 📬 Contact  
 For questions, suggestions, or support, feel free to reach out!  
