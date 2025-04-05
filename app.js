@@ -558,30 +558,6 @@ class QuantumAI {
     }
 }
 
-// Example usage (you can remove this in production)
-const ai = new QuantumAI();
-
-// Plugin recommendations
-const plugins = ai.recommendPlugins("Faction server", ["protection", "economy"]);
-console.log(plugins);
-
-// Troubleshooting
-const solution = ai.troubleshootIssue("java.lang.OutOfMemoryError: Java heap space");
-console.log(solution);
-
-// Learning system
-ai.learnFromInteraction("How to increase RAM", "You can increase RAM in your server settings...");
-const learnedResponse = ai.getLearnedResponse("increase RAM");
-console.log(learnedResponse);
-
-// Language detection
-const language = ai.detectLanguage("¿Cómo configuro mi servidor?");
-console.log(language); // "spanish"
-const response = ai.getLocalizedResponse("Hello", "tagalog");
-console.log(response);
-
-
-
 // MCZIE Hosting Chat Widget Controller
 class MCZIEChatWidget {
     constructor() {
