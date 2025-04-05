@@ -5,7 +5,7 @@ class QuantumAI {
         this.version = "4.0";
         this.creator = "MCZIE Hosting Team";
         this.mood = this.getRandomMood();
-        this.learningRate = 0.55; // Increased learning capability
+        this.learningRate = 0.55;
         this.memory = [];
         this.serverKnowledge = this.loadServerKnowledge();
         this.conversationContext = [];
@@ -36,7 +36,6 @@ class QuantumAI {
         this.loadPluginCompatibilityData();
     }
 
-    // NEW: Load plugin compatibility data
     loadPluginCompatibilityData() {
         this.pluginCompatibility = {
             "Spark": { requires: "Java 8+", conflicts: ["LagAssist"] },
@@ -47,15 +46,13 @@ class QuantumAI {
         };
     }
 
-    // NEW: Setup auto-save mechanism
     setupAutoSave() {
         setInterval(() => {
             this.saveMemory();
             this.saveUserPreferences();
-        }, 300000); // Save every 5 minutes
+        }, 300000);
     }
 
-    // NEW: User preferences system
     loadUserPreferences() {
         try {
             const prefs = localStorage.getItem('quantumAI_Preferences');
@@ -79,7 +76,6 @@ class QuantumAI {
         localStorage.setItem('quantumAI_Preferences', JSON.stringify(this.userPreferences));
     }
 
-    // Enhanced personality matrix with more traits
 initializePersonalityMatrix() {
     this.personalityTraits = {
         enthusiasm: 0.8,
@@ -91,18 +87,14 @@ initializePersonalityMatrix() {
         patience: 0.9,
         adaptability: 0.75
     };
-    
-    // NEW: Personality drift over time
+
     setInterval(() => {
         for (const trait in this.personalityTraits) {
-            // Slight random drift (±0.05)
             this.personalityTraits[trait] = Math.max(0.1, 
                 Math.min(1.0, this.personalityTraits[trait] + (Math.random() * 0.1 - 0.05)));
         }
-    }, 86400000); // Adjust daily
+    }, 86400000);
 }
-
-    // Enhanced mood system with more options
     getRandomMood() {
         const moodMatrix = {
             "happy": { weight: 0.2, emoji: "😊" },
@@ -119,7 +111,6 @@ initializePersonalityMatrix() {
         return this.weightedRandomSelection(moodMatrix);
     }
 
-    // NEW: More sophisticated intent detection
     detectIntent(text) {
         if (!text) return 'unknown';
         
@@ -137,7 +128,6 @@ initializePersonalityMatrix() {
         return 'unknown';
     }
 
-    // NEW: Entity extraction for better understanding
     extractEntities(text) {
         const entities = {
             versions: text.match(/(1\.\d{1,2}(\.\d{1,2})?)|(java\s*\d+)/gi) || [],
@@ -149,7 +139,6 @@ initializePersonalityMatrix() {
         return entities;
     }
 
-    // Enhanced user input processing
     processUserInput(message) {
         if (this.maintenanceMode) {
             return {
@@ -170,23 +159,20 @@ initializePersonalityMatrix() {
             entities: this.nlpProcessor.extractEntities(message),
             sentiment: this.analyzeSentiment(message)
         };
-        
-        // Store in memory with context
+
         this.memory.push({
             input: processed,
             mood: this.mood,
             context: [...this.conversationContext],
-            response: null // Will be filled when responding
+            response: null 
         });
-        
-        // Add to conversation context
+
         this.conversationContext.push({
             role: "user",
             content: message,
             timestamp: processed.timestamp
         });
-        
-        // Keep memory from growing too large
+
         if (this.memory.length > 100) {
             this.memory = this.memory.slice(-100);
         }
@@ -194,7 +180,6 @@ initializePersonalityMatrix() {
         return processed;
     }
 
-    // NEW: Sentiment analysis
     analyzeSentiment(text) {
         if (!text) return 0;
         
@@ -211,13 +196,11 @@ initializePersonalityMatrix() {
         negative.forEach(word => {
             if (lowerText.includes(word)) score -= 1;
         });
-        
-        // Scale to -1 to 1 range
+
         const wordCount = text.split(/\s+/).length;
         return wordCount > 0 ? Math.max(-1, Math.min(1, score / wordCount * 3)) : 0;
     }
 
-    // Enhanced response generation with context awareness
     generateResponse(userInput) {
         if (this.maintenanceMode) {
             return {
@@ -227,7 +210,6 @@ initializePersonalityMatrix() {
             };
         }
 
-        // Check for learned responses first
         const learnedResponse = this.getLearnedResponse(userInput.clean);
         if (learnedResponse) {
             return {
@@ -237,7 +219,6 @@ initializePersonalityMatrix() {
             };
         }
 
-        // Check knowledge base
         const knowledgeResponse = this.checkKnowledgeBase(userInput);
         if (knowledgeResponse) {
             return {
@@ -247,7 +228,6 @@ initializePersonalityMatrix() {
             };
         }
 
-        // Plugin recommendations
         if (userInput.intent === 'plugins' || userInput.entities.plugins.length > 0) {
             const pluginResponse = this.handlePluginQuery(userInput);
             if (pluginResponse) {
@@ -259,7 +239,6 @@ initializePersonalityMatrix() {
             }
         }
 
-        // Troubleshooting
         if (userInput.intent === 'support' && userInput.urgency !== 'low') {
             const troubleshootingResponse = this.handleTroubleshooting(userInput);
             if (troubleshootingResponse) {
@@ -274,7 +253,6 @@ initializePersonalityMatrix() {
             }
         }
 
-        // Fallback to mood-based response with context
         return {
             text: this.getContextualResponse(userInput),
             type: "conversational",
@@ -282,9 +260,7 @@ initializePersonalityMatrix() {
         };
     }
 
-    // NEW: Contextual response generation
     getContextualResponse(userInput) {
-        // Try to maintain context from conversation history
         if (this.conversationContext.length > 0) {
             const lastTopics = this.conversationContext.slice(-3)
                 .filter(c => c.role === 'user')
@@ -301,15 +277,12 @@ initializePersonalityMatrix() {
                 return `Regarding ${uniqueTopics.join(" or ")}, ${this.getMoodResponse()}`;
             }
         }
-        
-        // General fallback with personality
+
         return `${this.getMoodResponse()} ${this.getDynamicGreeting()}`;
     }
 
-    // NEW: Enhanced plugin handling
     handlePluginQuery(userInput) {
         if (userInput.entities.plugins.length > 0) {
-            // Specific plugin query
             const plugin = userInput.entities.plugins[0];
             const info = this.pluginCompatibility[plugin];
             
@@ -326,7 +299,6 @@ initializePersonalityMatrix() {
                 return `I don't have detailed information about ${plugin}, but it's a popular choice.`;
             }
         } else {
-            // General plugin recommendation
             const serverTypeMatch = userInput.clean.match(/(survival|creative|minigames|rpg|pvp)/i);
             const serverType = serverTypeMatch ? serverTypeMatch[0] : 'server';
             
@@ -334,7 +306,6 @@ initializePersonalityMatrix() {
         }
     }
 
-    // NEW: Detect plugin needs from input
     detectPluginNeeds(userInput) {
         const needs = [];
         
@@ -347,11 +318,9 @@ initializePersonalityMatrix() {
         return needs.length > 0 ? needs : ['performance', 'utility'];
     }
 
-    // Enhanced plugin recommendation
     recommendPlugins(serverType, needs) {
         if (!Array.isArray(needs)) needs = [needs];
-        
-        // Filter plugins by needs and compatibility
+
         const recommendations = [];
         const seenPlugins = new Set();
         
@@ -372,7 +341,6 @@ initializePersonalityMatrix() {
             }
         });
 
-        // Add description if available
         const pluginDescriptions = {
             "Spark": "performance monitoring and diagnostics",
             "ClearLag": "automatic item and entity cleanup",
@@ -390,7 +358,6 @@ initializePersonalityMatrix() {
             : "I couldn't find specific plugin recommendations. Could you describe what you're trying to achieve?";
     }
 
-    // NEW: Enhanced troubleshooting
     handleTroubleshooting(userInput) {
         const errorLog = userInput.raw;
         const result = this.troubleshootIssue(errorLog);
@@ -405,7 +372,6 @@ initializePersonalityMatrix() {
         return response;
     }
 
-    // NEW: Follow-up options generator
     generateFollowUpOptions(intent) {
         const optionsMap = {
             plans: [
@@ -433,7 +399,6 @@ initializePersonalityMatrix() {
         return optionsMap[intent] || optionsMap.default;
     }
 
-    // NEW: Plugin-specific options
     generatePluginOptions(plugins) {
         if (plugins.length === 0) return this.generateFollowUpOptions('plugins');
         
@@ -444,7 +409,6 @@ initializePersonalityMatrix() {
         ];
     }
 
-    // NEW: General conversation options
     generateGeneralOptions() {
         return [
             { text: "Server plans", action: "topic_plans" },
@@ -453,19 +417,16 @@ initializePersonalityMatrix() {
         ];
     }
 
-    // NEW: Check knowledge base with better matching
     checkKnowledgeBase(userInput) {
         const knowledgeTopics = Object.keys(this.serverKnowledge);
         const inputText = userInput.clean;
-        
-        // Exact topic match
+
         for (const topic of knowledgeTopics) {
             if (inputText.includes(topic)) {
                 return this.generateKnowledgeResponse(topic);
             }
         }
-        
-        // Intent-based match
+
         if (userInput.intent === 'plans') {
             return this.generateKnowledgeResponse('plans');
         }
@@ -481,7 +442,6 @@ initializePersonalityMatrix() {
         return null;
     }
 
-    // Enhanced knowledge response generation
     generateKnowledgeResponse(topic) {
         const knowledge = this.serverKnowledge[topic];
         if (!knowledge) return null;
@@ -519,7 +479,6 @@ initializePersonalityMatrix() {
         return response;
     }
 
-    // NEW: Enhanced troubleshooting with more cases
     troubleshootIssue(errorLog) {
         if (!errorLog || typeof errorLog !== 'string') {
             return {
@@ -564,7 +523,6 @@ initializePersonalityMatrix() {
             }
         };
 
-        // Check for exact matches first
         for (const [error, data] of Object.entries(commonIssues)) {
             if (errorLog.includes(error)) {
                 return {
@@ -575,7 +533,6 @@ initializePersonalityMatrix() {
             }
         }
 
-        // Check for patterns if exact match not found
         const patterns = {
             "memory": {
                 solution: "This appears to be memory-related. Try increasing RAM or optimizing plugins.",
@@ -612,7 +569,6 @@ initializePersonalityMatrix() {
         };
     }
 
-    // NEW: Enhanced language detection
     detectLanguage(text) {
         if (!text || typeof text !== 'string') return 'english';
         
@@ -630,7 +586,6 @@ initializePersonalityMatrix() {
                 count + (cleanText.includes(word) ? 1 : 0), 0);
         });
 
-        // Only return a language if we have reasonable confidence
         const maxScore = Math.max(...Object.values(scores));
         if (maxScore >= 2) {
             return Object.keys(scores).find(key => scores[key] === maxScore);
@@ -638,7 +593,6 @@ initializePersonalityMatrix() {
         return 'english';
     }
 
-    // NEW: Enhanced localized responses
     getLocalizedResponse(message, language = null) {
         if (!language) {
             language = this.detectLanguage(message);
@@ -679,7 +633,6 @@ initializePersonalityMatrix() {
                "I'm here to help with your Minecraft server. Could you please rephrase your question?";
     }
 
-    // NEW: Enhanced learning system
     learnFromInteraction(userInput, correctResponse) {
         if (!userInput || !correctResponse) return;
         
@@ -687,19 +640,16 @@ initializePersonalityMatrix() {
             const learnedResponses = JSON.parse(localStorage.getItem('learnedResponses') || "{}");
             const intent = this.nlpProcessor.detectIntent(userInput);
             const entities = this.nlpProcessor.extractEntities(userInput);
-            
-            // Create learning key from intent and main entities
+
             const learningKey = `${intent}_${entities.versions[0] || 'any'}_${entities.plugins[0] || 'any'}`;
             
             if (!learnedResponses[learningKey]) {
                 learnedResponses[learningKey] = [];
             }
-            
-            // Don't store duplicates
+
             if (!learnedResponses[learningKey].includes(correctResponse)) {
                 learnedResponses[learningKey].push(correctResponse);
-                
-                // Keep only the 3 best responses
+
                 if (learnedResponses[learningKey].length > 3) {
                     learnedResponses[learningKey] = learnedResponses[learningKey]
                         .slice(-3);
@@ -712,22 +662,19 @@ initializePersonalityMatrix() {
         }
     }
 
-    // NEW: Enhanced learned response retrieval
     getLearnedResponse(input) {
         try {
             const learnedResponses = JSON.parse(localStorage.getItem('learnedResponses') || "{}");
             const intent = this.nlpProcessor.detectIntent(input);
             const entities = this.nlpProcessor.extractEntities(input);
             
-            // Try exact match first
             const exactKey = `${intent}_${entities.versions[0] || 'any'}_${entities.plugins[0] || 'any'}`;
             if (learnedResponses[exactKey] && learnedResponses[exactKey].length > 0) {
                 return learnedResponses[exactKey][
                     Math.floor(Math.random() * learnedResponses[exactKey].length)
                 ];
             }
-            
-            // Fallback to intent-only match
+
             const intentKey = `${intent}_any_any`;
             if (learnedResponses[intentKey] && learnedResponses[intentKey].length > 0) {
                 return learnedResponses[intentKey][
@@ -740,18 +687,16 @@ initializePersonalityMatrix() {
         return null;
     }
 
-    // NEW: Maintenance mode toggle
     toggleMaintenanceMode(enable) {
         this.maintenanceMode = enable;
         if (enable) {
             console.log("Entering maintenance mode");
         } else {
             console.log("Exiting maintenance mode");
-            this.loadMemory(); // Refresh data when coming back online
+            this.loadMemory();
         }
     }
 
-    // NEW: Diagnostic report
     generateDiagnosticReport() {
         return {
             version: this.version,
@@ -765,7 +710,6 @@ initializePersonalityMatrix() {
         };
     }
 
-    // NEW: Reset functionality
     reset(complete = false) {
         this.conversationContext = [];
         
@@ -779,7 +723,6 @@ initializePersonalityMatrix() {
         return complete ? "Complete reset performed" : "Conversation context cleared";
     }
 
-    // NEW: Update user preferences
     updatePreferences(newPreferences) {
         this.userPreferences = {
             ...this.userPreferences,
@@ -790,14 +733,12 @@ initializePersonalityMatrix() {
     }
 }
 
-// Export for Node.js or browser
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = QuantumAI;
 } else {
     window.QuantumAI = QuantumAI;
 }
 
-// MCZIE Hosting Chat Widget Controller v2.0
 class MCZIEChatWidget {
     constructor() {
         this.isOpen = false;
@@ -839,7 +780,6 @@ class MCZIEChatWidget {
     }
 
     setupEventListeners() {
-        // Toggle chat visibility
         if (this.elements.chatIcon) {
             this.elements.chatIcon.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -847,7 +787,6 @@ class MCZIEChatWidget {
             });
         }
 
-        // Close button
         if (this.elements.closeBtn) {
             this.elements.closeBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -855,12 +794,10 @@ class MCZIEChatWidget {
             });
         }
 
-        // Send message on button click
         if (this.elements.sendBtn) {
             this.elements.sendBtn.addEventListener('click', () => this.sendMessage());
         }
 
-        // Send message on Enter key (but not Shift+Enter)
         if (this.elements.userInput) {
             this.elements.userInput.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
@@ -870,7 +807,6 @@ class MCZIEChatWidget {
             });
         }
 
-        // Quick action buttons
         if (this.elements.quickActionBtns) {
             this.elements.quickActionBtns.forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -883,28 +819,24 @@ class MCZIEChatWidget {
             });
         }
 
-        // Emoji picker button
         if (this.elements.emojiBtn) {
             this.elements.emojiBtn.addEventListener('click', () => {
                 this.toggleEmojiPicker();
             });
         }
 
-        // File upload button
         if (this.elements.fileBtn) {
             this.elements.fileBtn.addEventListener('click', () => {
                 this.uploadFile();
             });
         }
 
-        // Close chat when clicking outside
         document.addEventListener('click', (e) => {
             if (this.isOpen && this.elements.widget && !this.elements.widget.contains(e.target)) {
                 this.closeChat();
             }
         });
 
-        // Handle window resize
         window.addEventListener('resize', () => this.handleWindowResize());
     }
 
@@ -922,14 +854,12 @@ class MCZIEChatWidget {
         this.isOpen = true;
         this.elements.chatContainer.style.display = 'flex';
         
-        // Force reflow to ensure CSS transition works
         void this.elements.chatContainer.offsetWidth;
         
         this.elements.chatContainer.classList.add('open');
         this.resetUnreadCounter();
         this.scrollToBottom();
         
-        // Focus input field
         setTimeout(() => {
             if (this.elements.userInput) {
                 this.elements.userInput.focus();
@@ -1001,15 +931,12 @@ class MCZIEChatWidget {
         this.elements.userInput.value = '';
         this.addMessage('user', message);
         
-        // Show typing indicator
         this.showTypingIndicator();
         
-        // Clear any previous timeout
         if (this.typingTimeout) {
             clearTimeout(this.typingTimeout);
         }
         
-        // Simulate AI response delay
         this.typingTimeout = setTimeout(() => {
             this.hideTypingIndicator();
             const response = this.generateResponse(message);
@@ -1024,7 +951,6 @@ class MCZIEChatWidget {
     sendQuickResponse(question) {
         this.showTypingIndicator();
         
-        // Clear any previous timeout
         if (this.typingTimeout) {
             clearTimeout(this.typingTimeout);
         }
@@ -1079,7 +1005,6 @@ class MCZIEChatWidget {
     generateResponse(message) {
         const cleanMsg = message.toLowerCase();
         
-        // 🎉 Randomized Greetings
         if (/(hi|hello|hey|greetings)/i.test(cleanMsg)) {
             const greetings = [
                 "Hello there! 👋 How can I assist you with your Minecraft server today?",
@@ -1092,7 +1017,6 @@ class MCZIEChatWidget {
             return greetings[Math.floor(Math.random() * greetings.length)];
         }
         
-        // Hosting Plans
         if (/(plan|price|cost|package|tier|pricing)/i.test(cleanMsg)) {
             return `We have a variety of hosting plans tailored to your needs:<br><br>
                 <div class="plan-option"><strong>Budget Plan</strong> (₱80/month)<br>
@@ -1104,7 +1028,6 @@ class MCZIEChatWidget {
                 <a href="/available/Pricing-Plans.html" class="btn-in-chat">Explore All Plans</a>`;
         }
         
-        // Setup Instructions
         if (/(setup|install|start|begin|configure)/i.test(cleanMsg)) {
             return `Getting your server up and running is a breeze! Follow these steps:<br><br>
                 1. Check your email for login credentials.<br>
@@ -1113,7 +1036,6 @@ class MCZIEChatWidget {
                 Need help? <button class="quick-action-btn" data-question="I need setup help">Click here</button>`;
         }
     
-        // 🔥 Performance Plugins
         if (/performance|lag|optimize/i.test(cleanMsg)) {
             return `🚀 <strong>Performance Optimization Plugins</strong>:<br><br>
                 - 🛠️ <a href="https://www.spigotmc.org/resources/spark.57242/" target="_blank"><strong>Spark</strong></a> (Performance profiling & monitoring)<br>
@@ -1122,7 +1044,6 @@ class MCZIEChatWidget {
                 <small>Tip: Use <code>/spark sampler</code> to identify performance issues</small>`;
         }
     
-        // 💰 Economy Plugins
         if (/economy|money|shop/i.test(cleanMsg)) {
             return `💰 <strong>Economy Plugins for Your Server</strong>:<br><br>
                 - 🏦 <a href="https://www.spigotmc.org/resources/essentialsx.9089/" target="_blank"><strong>EssentialsX</strong></a> (Core economy commands & features)<br>
@@ -1130,8 +1051,7 @@ class MCZIEChatWidget {
                 - 🛍️ <a href="https://www.spigotmc.org/resources/shopguiplus.6515/" target="_blank"><strong>ShopGUIPlus</strong></a> (GUI-based player shop system)<br><br>
                 <small>Remember to install Vault for economy plugins to work together</small>`;
         }
-    
-        // 🛡️ Protection Plugins
+
         if (/protection|anti-grief|security/i.test(cleanMsg)) {
             return `🛡️ <strong>Protection & Anti-Griefing Plugins</strong>:<br><br>
                 - 🔒 <a href="https://www.spigotmc.org/resources/worldguard.18911/" target="_blank"><strong>WorldGuard</strong></a> (Protects land & areas from griefing)<br>
@@ -1139,8 +1059,7 @@ class MCZIEChatWidget {
                 - 🏡 <a href="https://www.spigotmc.org/resources/griefprevention.1884/" target="_blank"><strong>GriefPrevention</strong></a> (Players can claim land to prevent griefing)<br><br>
                 <small>Pro Tip: Use CoreProtect for rollback commands like <code>/co restore</code></small>`;
         }
-    
-        // ⚔️ PvP Plugins
+
         if (/pvp|combat|battle/i.test(cleanMsg)) {
             return `⚔️ <strong>PvP & Combat Plugins</strong>:<br><br>
                 - 🏹 <a href="https://www.spigotmc.org/resources/duels.20171/" target="_blank"><strong>Duels</strong></a> (Organized 1v1 battles)<br>
@@ -1148,8 +1067,7 @@ class MCZIEChatWidget {
                 - ⛔ <a href="https://www.spigotmc.org/resources/worldguard.18911/" target="_blank"><strong>WorldGuard</strong></a> (Create PvP-enabled/disabled zones)<br><br>
                 <button class="quick-action-btn" data-question="How to set up PvP arenas">Help with PvP Arenas</button>`;
         }
-    
-        // 🎮 Fun Plugins
+
         if (/fun|customization|cosmetic/i.test(cleanMsg)) {
             return `🎮 <strong>Fun & Customization Plugins</strong>:<br><br>
                 - ✨ <a href="https://www.spigotmc.org/resources/decentholograms.83757/" target="_blank"><strong>DecentHolograms</strong></a> (Floating text displays)<br>
@@ -1157,8 +1075,7 @@ class MCZIEChatWidget {
                 - 🐉 <a href="https://www.spigotmc.org/resources/mythicmobs.5702/" target="_blank"><strong>MythicMobs</strong></a> (Create custom mobs & bosses)<br><br>
                 <button class="quick-action-btn" data-question="How to add custom items">Custom Items Guide</button>`;
         }
-    
-        // Error Log Analysis
+
         if (/error|crash|issue|problem|fix|help/i.test(cleanMsg)) {
             return `🛠️ <strong>Server Issue Help</strong>:<br><br>
                 I can help analyze server errors. Try:<br>
@@ -1168,8 +1085,7 @@ class MCZIEChatWidget {
                 <button class="quick-action-btn" data-question="My server won't start">Startup Problems</button>
                 <button class="quick-action-btn" data-question="My server is lagging">Lag Issues</button>`;
         }
-    
-        // Thank you responses
+
         if (/thank|thanks|appreciate|helpful/i.test(cleanMsg)) {
             const thanksResponses = [
                 "You're welcome! 😊 Happy to help with your Minecraft server!",
@@ -1179,8 +1095,7 @@ class MCZIEChatWidget {
             ];
             return thanksResponses[Math.floor(Math.random() * thanksResponses.length)];
         }
-    
-        // Randomized Fallback Responses
+
         const fallbackMessages = [
             "Hmm, I didn't quite catch that. Could you rephrase your question about your Minecraft server?",
             "I'm not sure I understand. Could you provide more details about your server issue?",
@@ -1261,17 +1176,15 @@ class MCZIEChatWidget {
             if (this.isOpen && this.messageHistory.length > 0) {
                 this.addMessage('ai', "Still there? I'm here if you have any questions about your Minecraft server!", false);
             }
-        }, 300000); // 5 minutes
+        }, 300000);
     }
 
     toggleEmojiPicker() {
         console.log("Emoji picker would open here");
-        // Actual implementation would use an emoji picker library
     }
 
     uploadFile() {
         console.log("File upload dialog would open here");
-        // Actual implementation would create a file input element
     }
 
     handleWindowResize() {
@@ -1283,7 +1196,7 @@ class MCZIEChatWidget {
     saveMessageHistory() {
         try {
             localStorage.setItem('mczieChatHistory', JSON.stringify({
-                messages: this.messageHistory.slice(-50), // Keep last 50 messages
+                messages: this.messageHistory.slice(-50),
                 lastUpdated: new Date().toISOString()
             }));
         } catch (e) {
@@ -1298,8 +1211,7 @@ class MCZIEChatWidget {
                 const parsed = JSON.parse(saved);
                 if (parsed.messages && Array.isArray(parsed.messages)) {
                     this.messageHistory = parsed.messages;
-                    
-                    // Only reload messages if chat was open
+
                     if (this.isOpen && this.elements.chatMessages) {
                         this.elements.chatMessages.innerHTML = '';
                         this.messageHistory.forEach(msg => {
@@ -1314,12 +1226,10 @@ class MCZIEChatWidget {
     }
 }
 
-// Initialize the chat widget when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     try {
         window.mczieChatWidget = new MCZIEChatWidget();
         
-        // Add global helper function
         window.toggleChatWidget = function() {
             if (window.mczieChatWidget) {
                 window.mczieChatWidget.toggleChat();
