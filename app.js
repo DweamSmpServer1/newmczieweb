@@ -1,8 +1,8 @@
 class QuantumAI {
     constructor() {
         this.name = "MCZIE Quantum Assistant";
-        this.version = "4.0";
-        this.creator = "LiamGrant";
+        this.version = "4.1";
+        this.creator = "MCZIETEAM";
         this.mood = this.getRandomMood();
         this.learningRate = 0.55;
         this.memory = [];
