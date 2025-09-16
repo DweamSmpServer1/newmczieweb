@@ -1,12 +1,12 @@
-// Quantum AI Personality Core v4.0 - MCZIE Hosting Premium Edition
 class QuantumAI {
     constructor() {
         this.name = "MCZIE Quantum Assistant";
         this.version = "4.0";
-        this.creator = "MCZIE Hosting Team";
+        this.creator = "LiamGrant";
         this.mood = this.getRandomMood();
         this.learningRate = 0.55;
         this.memory = [];
+        this.QuantumAI = new QuantumAI();
         this.serverKnowledge = this.loadServerKnowledge();
         this.conversationContext = [];
         this.commonWords = ["the", "and", "for", "your", "with", "this", "that"];
@@ -1002,111 +1002,170 @@ class MCZIEChatWidget {
         }
     }
 
-    generateResponse(message) {
-        const cleanMsg = message.toLowerCase();
-        
-        if (/(hi|hello|hey|greetings)/i.test(cleanMsg)) {
-            const greetings = [
-                "Hello there! 👋 How can I assist you with your Minecraft server today?",
-                "Hey! 😊 What do you need help with?",
-                "Hi there! 🚀 Need plugin suggestions or server setup help?",
-                "Greetings, adventurer! 🏰 How can I help with your server?",
-                "Yo! 🤙 What's up? Need anything for your Minecraft world?",
-                "Hey there! 🎮 Ready to make your server awesome? Let me know how I can help!"
-            ];
-            return greetings[Math.floor(Math.random() * greetings.length)];
-        }
-        
-        if (/(plan|price|cost|package|tier|pricing)/i.test(cleanMsg)) {
-            return `We have a variety of hosting plans tailored to your needs:<br><br>
-                <div class="plan-option"><strong>Budget Plan</strong> (₱80/month)<br>
-                    <small>Xeon E5-2650 V4 • DDR4 2133Mhz</small></div>
-                <div class="plan-option"><strong>Enterprise Plan</strong> (₱130/month)<br>
-                    <small>Xeon E5-2698 V3 • DDR4 2666Mhz</small></div>
-                <div class="plan-option"><strong>Professional Plan</strong> (₱250/month)<br>
-                    <small>Ryzen 7 2700X • DDR4 3200Mhz</small></div>
-                <a href="/available/Pricing-Plans.html" class="btn-in-chat">Explore All Plans</a>`;
-        }
-        
-        if (/(setup|install|start|begin|configure)/i.test(cleanMsg)) {
-            return `Getting your server up and running is a breeze! Follow these steps:<br><br>
-                1. Check your email for login credentials.<br>
-                2. Access your <a href="https://srv.mcziehost.fun:8443" target="_blank">control panel</a>.<br>
-                3. Follow our detailed <a href="/index.html">setup guide</a>.<br><br>
-                Need help? <button class="quick-action-btn" data-question="I need setup help">Click here</button>`;
-        }
-    
-        if (/performance|lag|optimize/i.test(cleanMsg)) {
-            return `🚀 <strong>Performance Optimization Plugins</strong>:<br><br>
-                - 🛠️ <a href="https://www.spigotmc.org/resources/spark.57242/" target="_blank"><strong>Spark</strong></a> (Performance profiling & monitoring)<br>
-                - 🧹 <a href="https://www.spigotmc.org/resources/clearlagg.68271/" target="_blank"><strong>ClearLag</strong></a> (Removes unnecessary entities to reduce lag)<br>
-                - 🌍 <a href="https://www.spigotmc.org/resources/chunky.81534/" target="_blank"><strong>Chunky</strong></a> (Efficient world pre-loading to reduce lag)<br><br>
-                <small>Tip: Use <code>/spark sampler</code> to identify performance issues</small>`;
-        }
-    
-        if (/economy|money|shop/i.test(cleanMsg)) {
-            return `💰 <strong>Economy Plugins for Your Server</strong>:<br><br>
-                - 🏦 <a href="https://www.spigotmc.org/resources/essentialsx.9089/" target="_blank"><strong>EssentialsX</strong></a> (Core economy commands & features)<br>
-                - 💳 <a href="https://www.spigotmc.org/resources/vault.34315/" target="_blank"><strong>Vault</strong></a> (Economy API for other plugins)<br>
-                - 🛍️ <a href="https://www.spigotmc.org/resources/shopguiplus.6515/" target="_blank"><strong>ShopGUIPlus</strong></a> (GUI-based player shop system)<br><br>
-                <small>Remember to install Vault for economy plugins to work together</small>`;
-        }
-
-        if (/protection|anti-grief|security/i.test(cleanMsg)) {
-            return `🛡️ <strong>Protection & Anti-Griefing Plugins</strong>:<br><br>
-                - 🔒 <a href="https://www.spigotmc.org/resources/worldguard.18911/" target="_blank"><strong>WorldGuard</strong></a> (Protects land & areas from griefing)<br>
-                - 📜 <a href="https://www.spigotmc.org/resources/coreprotect.8631/" target="_blank"><strong>CoreProtect</strong></a> (Logs block changes & rollbacks)<br>
-                - 🏡 <a href="https://www.spigotmc.org/resources/griefprevention.1884/" target="_blank"><strong>GriefPrevention</strong></a> (Players can claim land to prevent griefing)<br><br>
-                <small>Pro Tip: Use CoreProtect for rollback commands like <code>/co restore</code></small>`;
-        }
-
-        if (/pvp|combat|battle/i.test(cleanMsg)) {
-            return `⚔️ <strong>PvP & Combat Plugins</strong>:<br><br>
-                - 🏹 <a href="https://www.spigotmc.org/resources/duels.20171/" target="_blank"><strong>Duels</strong></a> (Organized 1v1 battles)<br>
-                - ⚔️ <a href="https://www.spigotmc.org/resources/advancedclans.71765/" target="_blank"><strong>AdvancedClans</strong></a> (Factions-based PvP system)<br>
-                - ⛔ <a href="https://www.spigotmc.org/resources/worldguard.18911/" target="_blank"><strong>WorldGuard</strong></a> (Create PvP-enabled/disabled zones)<br><br>
-                <button class="quick-action-btn" data-question="How to set up PvP arenas">Help with PvP Arenas</button>`;
-        }
-
-        if (/fun|customization|cosmetic/i.test(cleanMsg)) {
-            return `🎮 <strong>Fun & Customization Plugins</strong>:<br><br>
-                - ✨ <a href="https://www.spigotmc.org/resources/decentholograms.83757/" target="_blank"><strong>DecentHolograms</strong></a> (Floating text displays)<br>
-                - 🎨 <a href="https://www.spigotmc.org/resources/itemsadder.73355/" target="_blank"><strong>ItemsAdder</strong></a> (Adds custom items & cosmetics)<br>
-                - 🐉 <a href="https://www.spigotmc.org/resources/mythicmobs.5702/" target="_blank"><strong>MythicMobs</strong></a> (Create custom mobs & bosses)<br><br>
-                <button class="quick-action-btn" data-question="How to add custom items">Custom Items Guide</button>`;
-        }
-
-        if (/error|crash|issue|problem|fix|help/i.test(cleanMsg)) {
-            return `🛠️ <strong>Server Issue Help</strong>:<br><br>
-                I can help analyze server errors. Try:<br>
-                1. Share your error log using the <i class="icon-file-upload"></i> button<br>
-                2. Describe when the problem occurs<br>
-                3. Tell me your server version<br><br>
-                <button class="quick-action-btn" data-question="My server won't start">Startup Problems</button>
-                <button class="quick-action-btn" data-question="My server is lagging">Lag Issues</button>`;
-        }
-
-        if (/thank|thanks|appreciate|helpful/i.test(cleanMsg)) {
-            const thanksResponses = [
-                "You're welcome! 😊 Happy to help with your Minecraft server!",
-                "No problem at all! 🎮 Let me know if you need anything else.",
-                "Glad I could help! ⚡ Come back anytime you have server questions!",
-                "My pleasure! 🏰 Enjoy your enhanced server experience!"
-            ];
-            return thanksResponses[Math.floor(Math.random() * thanksResponses.length)];
-        }
-
-        const fallbackMessages = [
-            "Hmm, I didn't quite catch that. Could you rephrase your question about your Minecraft server?",
-            "I'm not sure I understand. Could you provide more details about your server issue?",
-            "That's an interesting question! Are you asking about server setup, plugins, or hosting?",
-            "I specialize in Minecraft server help. Could you clarify your question?",
-            "Let me think... 🤔 Could you ask that in a different way?",
-            "I want to make sure I help properly. What exactly are you trying to do with your server?"
-        ];
-        
-        return fallbackMessages[Math.floor(Math.random() * fallbackMessages.length)];
+    // Full improved sync version with design + more plugins
+generateResponse(message) {
+    const cleanMsg = String(message ?? '').trim();
+    const lower = cleanMsg.toLowerCase();
+    const randomFrom = arr => arr[Math.floor(Math.random() * arr.length)];
+  
+    // === Greetings ===
+    if (lower.includes("hi") || lower.includes("hello") || lower.includes("hey") || lower.includes("greetings")) {
+      const greetings = [
+        `<div class="chat-response greeting">👋 <strong>Hello there!</strong><br>How can I assist you with your Minecraft server today?</div>`,
+        `<div class="chat-response greeting">😊 <strong>Hey!</strong><br>What do you need help with?</div>`,
+        `<div class="chat-response greeting">🚀 <strong>Hi there!</strong><br>Need plugin suggestions or server setup help?</div>`,
+        `<div class="chat-response greeting">🏰 <strong>Greetings, adventurer!</strong><br>How can I help with your server?</div>`,
+        `<div class="chat-response greeting">🤙 <strong>Yo!</strong><br>What's up? Need anything for your Minecraft world?</div>`,
+        `<div class="chat-response greeting">🎮 <strong>Hey there!</strong><br>Ready to make your server awesome? Let me know how I can help!</div>`
+      ];
+      return randomFrom(greetings);
     }
+  
+    // === Pricing ===
+    if (["plan","price","cost","package","tier","pricing"].some(k=>lower.includes(k))) {
+      return `<div class="chat-response pricing">
+        <h3>💎 Hosting Plans</h3>
+        <div class="plan-option"><strong>Budget Plan</strong> — <span class="price">₱80/month</span><br>
+            <small>Xeon E5-2650 V4 • DDR4 2133Mhz</small></div>
+        <div class="plan-option"><strong>Enterprise Plan</strong> — <span class="price">₱130/month</span><br>
+            <small>Xeon E5-2698 V3 • DDR4 2666Mhz</small></div>
+        <div class="plan-option"><strong>Professional Plan</strong> — <span class="price">₱250/month</span><br>
+            <small>Ryzen 7 2700X • DDR4 3200Mhz</small></div>
+        <a href="/available/Pricing-Plans.html" class="btn-in-chat">📋 Explore All Plans</a>
+      </div>`;
+    }
+  
+    // === Setup ===
+    if (["setup","install","start","begin","configure"].some(k=>lower.includes(k))) {
+      return `<div class="chat-response setup">
+        <h3>⚡ Quick Setup Guide</h3>
+        <ol>
+          <li>📧 Check your email for login credentials.</li>
+          <li>🔑 Access your <a href="https://srv.mcziehost.fun:8443" target="_blank">control panel</a>.</li>
+          <li>📖 Follow our <a href="/index.html">detailed setup guide</a>.</li>
+        </ol>
+        <button class="quick-action-btn" data-question="I need setup help">🆘 Need Setup Help</button>
+      </div>`;
+    }
+  
+    // === Performance Plugins ===
+    if (["performance","lag","optimize"].some(k=>lower.includes(k))) {
+      return `<div class="chat-response performance">
+        <h3>🚀 Performance Optimization</h3>
+        <ul>
+          <li>🛠️ <a href="https://www.spigotmc.org/resources/spark.57242/" target="_blank"><strong>Spark</strong></a> — Profiling & monitoring</li>
+          <li>🧹 <a href="https://www.spigotmc.org/resources/clearlagg.68271/" target="_blank"><strong>ClearLag</strong></a> — Reduce entity lag</li>
+          <li>🌍 <a href="https://www.spigotmc.org/resources/chunky.81534/" target="_blank"><strong>Chunky</strong></a> — World pre-loading</li>
+          <li>📦 <a href="https://www.spigotmc.org/resources/farm-limiter.1419/" target="_blank"><strong>FarmLimiter</strong></a> — Reduce mob farms impact</li>
+        </ul>
+        <small>💡 Use <code>/spark sampler</code> to detect issues.</small>
+      </div>`;
+    }
+  
+    // === Economy Plugins ===
+    if (["economy","money","shop","market","store"].some(k=>lower.includes(k))) {
+      return `<div class="chat-response economy">
+        <h3>💰 Economy Plugins</h3>
+        <ul>
+          <li>🏦 <a href="https://www.spigotmc.org/resources/essentialsx.9089/" target="_blank"><strong>EssentialsX</strong></a> — Core commands</li>
+          <li>💳 <a href="https://www.spigotmc.org/resources/vault.34315/" target="_blank"><strong>Vault</strong></a> — Economy API</li>
+          <li>🛍️ <a href="https://www.spigotmc.org/resources/shopguiplus.6515/" target="_blank"><strong>ShopGUIPlus</strong></a> — GUI shops</li>
+          <li>📦 <a href="https://www.spigotmc.org/resources/chestshop.51856/" target="_blank"><strong>ChestShop</strong></a> — Sign-based shops</li>
+          <li>💸 <a href="https://www.spigotmc.org/resources/jobs-reborn.4216/" target="_blank"><strong>Jobs Reborn</strong></a> — Earn money via jobs</li>
+        </ul>
+      </div>`;
+    }
+  
+    // === Protection Plugins ===
+    if (["protection","anti-grief","security","grief"].some(k=>lower.includes(k))) {
+      return `<div class="chat-response protection">
+        <h3>🛡️ Protection & Security</h3>
+        <ul>
+          <li>🔒 <a href="https://www.spigotmc.org/resources/worldguard.18911/" target="_blank"><strong>WorldGuard</strong></a> — Area protection</li>
+          <li>📜 <a href="https://www.spigotmc.org/resources/coreprotect.8631/" target="_blank"><strong>CoreProtect</strong></a> — Rollbacks/logging</li>
+          <li>🏡 <a href="https://www.spigotmc.org/resources/griefprevention.1884/" target="_blank"><strong>GriefPrevention</strong></a> — Land claiming</li>
+          <li>👮 <a href="https://www.spigotmc.org/resources/lockettepro.20427/" target="_blank"><strong>LockettePro</strong></a> — Chest/door locking</li>
+        </ul>
+      </div>`;
+    }
+  
+    // === PvP Plugins ===
+    if (["pvp","combat","battle","fight"].some(k=>lower.includes(k))) {
+      return `<div class="chat-response pvp">
+        <h3>⚔️ PvP & Combat</h3>
+        <ul>
+          <li>🏹 <a href="https://www.spigotmc.org/resources/duels.20171/" target="_blank"><strong>Duels</strong></a> — 1v1 battles</li>
+          <li>⚔️ <a href="https://www.spigotmc.org/resources/advancedclans.71765/" target="_blank"><strong>AdvancedClans</strong></a> — Clan system</li>
+          <li>🛡️ <a href="https://www.spigotmc.org/resources/battle-arena.2164/" target="_blank"><strong>BattleArena</strong></a> — PvP minigames</li>
+        </ul>
+      </div>`;
+    }
+  
+    // === Fun Plugins ===
+    if (["fun","customization","cosmetic","cool"].some(k=>lower.includes(k))) {
+      return `<div class="chat-response fun">
+        <h3>🎮 Fun & Customization</h3>
+        <ul>
+          <li>✨ <a href="https://www.spigotmc.org/resources/decentholograms.83757/" target="_blank"><strong>DecentHolograms</strong></a> — Floating text</li>
+          <li>🎨 <a href="https://www.spigotmc.org/resources/itemsadder.73355/" target="_blank"><strong>ItemsAdder</strong></a> — Custom items</li>
+          <li>🐉 <a href="https://www.spigotmc.org/resources/mythicmobs.5702/" target="_blank"><strong>MythicMobs</strong></a> — Custom mobs</li>
+          <li>🔥 <a href="https://www.spigotmc.org/resources/citizens.13811/" target="_blank"><strong>Citizens</strong></a> — Custom NPCs</li>
+          <li>🎆 <a href="https://www.spigotmc.org/resources/ultra-cosmetics.10905/" target="_blank"><strong>UltraCosmetics</strong></a> — Gadgets & cosmetics</li>
+        </ul>
+      </div>`;
+    }
+  
+    // === Minigames ===
+    if (["minigame","game","arcade","funny"].some(k=>lower.includes(k))) {
+      return `<div class="chat-response minigames">
+        <h3>🎯 Minigame Plugins</h3>
+        <ul>
+          <li>🧱 <a href="https://www.spigotmc.org/resources/bedwars1058.50942/" target="_blank"><strong>BedWars1058</strong></a></li>
+          <li>⛏️ <a href="https://www.spigotmc.org/resources/skywarsreloaded.3796/" target="_blank"><strong>SkyWarsReloaded</strong></a></li>
+          <li>🏹 <a href="https://www.spigotmc.org/resources/hungergames.65942/" target="_blank"><strong>HungerGames</strong></a></li>
+          <li>🎲 <a href="https://www.spigotmc.org/resources/blockparty.28492/" target="_blank"><strong>BlockParty</strong></a></li>
+        </ul>
+      </div>`;
+    }
+  
+    // === Errors ===
+    if (["error","crash","issue","problem","fix","help"].some(k=>lower.includes(k))) {
+      return `<div class="chat-response error">
+        <h3>🛠️ Server Issue Help</h3>
+        <p>I can help analyze errors:</p>
+        <ol>
+          <li>📂 Share your error log using the upload button</li>
+          <li>🕒 Describe when the issue happens</li>
+          <li>🖥️ Tell me your server version</li>
+        </ol>
+        <button class="quick-action-btn" data-question="My server won't start">🚨 Startup Problems</button>
+        <button class="quick-action-btn" data-question="My server is lagging">🐢 Lag Issues</button>
+      </div>`;
+    }
+  
+    // === Thanks ===
+    if (["thank","thanks","appreciate","helpful"].some(k=>lower.includes(k))) {
+      const thanksResponses = [
+        `<div class="chat-response thanks">😊 You're welcome! Happy to help with your Minecraft server!</div>`,
+        `<div class="chat-response thanks">🎮 No problem at all! Let me know if you need anything else.</div>`,
+        `<div class="chat-response thanks">⚡ Glad I could help! Come back anytime with server questions!</div>`,
+        `<div class="chat-response thanks">🏰 My pleasure! Enjoy your enhanced server experience!</div>`
+      ];
+      return randomFrom(thanksResponses);
+    }
+  
+    // === Fallback to AI ===
+    const processedInput = this.quantumAI?.processUserInput
+      ? this.quantumAI.processUserInput(message)
+      : message;
+  
+    const aiResponse = this.quantumAI?.generateResponse
+      ? this.quantumAI.generateResponse(processedInput)
+      : null;
+  
+    return `<div class="chat-response fallback">${aiResponse?.text || "🤔 Hmm, I didn’t quite catch that. Could you rephrase your question?"}</div>`;
+  }
+  
 
     scrollToBottom() {
         if (this.elements.chatMessages) {
