@@ -1,12 +1,12 @@
+// QuantumAI Class
 class QuantumAI {
     constructor() {
         this.name = "MCZIE Quantum Assistant";
-        this.version = "4.1";
-        this.creator = "MCZIETEAM";
+        this.version = "4.0";
+        this.creator = "MCZIE Hosting Team";
         this.mood = this.getRandomMood();
         this.learningRate = 0.55;
         this.memory = [];
-        this.QuantumAI = new QuantumAI();
         this.serverKnowledge = this.loadServerKnowledge();
         this.conversationContext = [];
         this.commonWords = ["the", "and", "for", "your", "with", "this", "that"];
@@ -76,25 +76,26 @@ class QuantumAI {
         localStorage.setItem('quantumAI_Preferences', JSON.stringify(this.userPreferences));
     }
 
-initializePersonalityMatrix() {
-    this.personalityTraits = {
-        enthusiasm: 0.8,
-        technical: 0.7,
-        friendliness: 0.9,
-        creativity: 0.6,
-        professionalism: 0.85,
-        humor: 0.4,
-        patience: 0.9,
-        adaptability: 0.75
-    };
+    initializePersonalityMatrix() {
+        this.personalityTraits = {
+            enthusiasm: 0.8,
+            technical: 0.7,
+            friendliness: 0.9,
+            creativity: 0.6,
+            professionalism: 0.85,
+            humor: 0.4,
+            patience: 0.9,
+            adaptability: 0.75
+        };
 
-    setInterval(() => {
-        for (const trait in this.personalityTraits) {
-            this.personalityTraits[trait] = Math.max(0.1, 
-                Math.min(1.0, this.personalityTraits[trait] + (Math.random() * 0.1 - 0.05)));
-        }
-    }, 86400000);
-}
+        setInterval(() => {
+            for (const trait in this.personalityTraits) {
+                this.personalityTraits[trait] = Math.max(0.1, 
+                    Math.min(1.0, this.personalityTraits[trait] + (Math.random() * 0.1 - 0.05)));
+            }
+        }, 86400000);
+    }
+
     getRandomMood() {
         const moodMatrix = {
             "happy": { weight: 0.2, emoji: "😊" },
@@ -111,6 +112,20 @@ initializePersonalityMatrix() {
         return this.weightedRandomSelection(moodMatrix);
     }
 
+    weightedRandomSelection(options) {
+        const totalWeight = Object.values(options).reduce((sum, option) => sum + option.weight, 0);
+        let random = Math.random() * totalWeight;
+        
+        for (const [key, option] of Object.entries(options)) {
+            random -= option.weight;
+            if (random <= 0) {
+                return key;
+            }
+        }
+        
+        return Object.keys(options)[0];
+    }
+
     detectIntent(text) {
         if (!text) return 'unknown';
         
@@ -124,6 +139,7 @@ initializePersonalityMatrix() {
         if (/feature|what can you do|capability/i.test(lowerText)) return 'features';
         if (/how to|tutorial|guide|steps/i.test(lowerText)) return 'tutorial';
         if (/thank|thanks|appreciate/i.test(lowerText)) return 'gratitude';
+        if (/minecraft|server|hosting/i.test(lowerText)) return 'minecraft';
         
         return 'unknown';
     }
@@ -131,7 +147,7 @@ initializePersonalityMatrix() {
     extractEntities(text) {
         const entities = {
             versions: text.match(/(1\.\d{1,2}(\.\d{1,2})?)|(java\s*\d+)/gi) || [],
-            plugins: text.match(/\b(spark|worldguard|essentials|vault)\b/gi) || [],
+            plugins: text.match(/\b(spark|worldguard|essentials|vault|clearlag|chunky|luckperms|itemsadder)\b/gi) || [],
             resources: text.match(/\b(ram|cpu|storage|disk|bandwidth)\b/gi) || [],
             quantities: text.match(/\b(\d+)\s*(gb|mb|players|slots)\b/gi) || []
         };
@@ -178,6 +194,18 @@ initializePersonalityMatrix() {
         }
         
         return processed;
+    }
+
+    detectUrgency(text) {
+        if (!text) return 'low';
+        
+        const lowerText = text.toLowerCase();
+        if (/(urgent|emergency|immediately|asap|right now|broken|down|not working)/i.test(lowerText)) {
+            return 'high';
+        } else if (/(soon|today|quick|fast|help|issue|problem)/i.test(lowerText)) {
+            return 'medium';
+        }
+        return 'low';
     }
 
     analyzeSentiment(text) {
@@ -281,6 +309,29 @@ initializePersonalityMatrix() {
         return `${this.getMoodResponse()} ${this.getDynamicGreeting()}`;
     }
 
+    getMoodResponse() {
+        const moodResponses = {
+            happy: "I'm happy to help!",
+            excited: "I'm excited to assist you!",
+            technical: "From a technical perspective,",
+            playful: "Let's play with some ideas!",
+            thoughtful: "After some consideration,",
+            supportive: "I'm here to support you with",
+            energetic: "I'm energized to help with",
+            calm: "Let's calmly address",
+            curious: "I'm curious about"
+        };
+        
+        return moodResponses[this.mood] || "I'm here to help with";
+    }
+
+    getDynamicGreeting() {
+        const hour = new Date().getHours();
+        if (hour < 12) return "Good morning! How can I assist with your Minecraft server?";
+        if (hour < 18) return "Good afternoon! What do you need help with today?";
+        return "Good evening! How can I help with your server?";
+    }
+
     handlePluginQuery(userInput) {
         if (userInput.entities.plugins.length > 0) {
             const plugin = userInput.entities.plugins[0];
@@ -346,7 +397,12 @@ initializePersonalityMatrix() {
             "ClearLag": "automatic item and entity cleanup",
             "WorldGuard": "region protection and management",
             "LuckPerms": "advanced permission management",
-            "ItemsAdder": "custom items and blocks"
+            "ItemsAdder": "custom items and blocks",
+            "EssentialsX": "essential commands and features",
+            "Vault": "economy and permissions API",
+            "ShopGUIPlus": "GUI-based shopping system",
+            "DecentHolograms": "hologram display system",
+            "MythicMobs": "custom mobs and bosses"
         };
         
         const formattedRecs = recommendations.map(p => {
@@ -367,113 +423,6 @@ initializePersonalityMatrix() {
         
         if (result.additionalHelp) {
             response += `\n${result.additionalHelp}`;
-        }
-        
-        return response;
-    }
-
-    generateFollowUpOptions(intent) {
-        const optionsMap = {
-            plans: [
-                { text: "Compare all plans", action: "show_all_plans" },
-                { text: "Best plan for modpacks", action: "plan_modpacks" },
-                { text: "Budget options", action: "plan_budget" }
-            ],
-            plugins: [
-                { text: "Performance plugins", action: "plugins_performance" },
-                { text: "Economy plugins", action: "plugins_economy" },
-                { text: "Plugin conflicts", action: "plugin_conflicts" }
-            ],
-            support: [
-                { text: "Server won't start", action: "troubleshoot_startup" },
-                { text: "Lag issues", action: "troubleshoot_lag" },
-                { text: "Connection problems", action: "troubleshoot_connection" }
-            ],
-            default: [
-                { text: "Tell me more", action: "continue" },
-                { text: "Something else", action: "change_topic" },
-                { text: "Contact support", action: "contact_support" }
-            ]
-        };
-        
-        return optionsMap[intent] || optionsMap.default;
-    }
-
-    generatePluginOptions(plugins) {
-        if (plugins.length === 0) return this.generateFollowUpOptions('plugins');
-        
-        return [
-            { text: "Compatibility info", action: `plugin_compat_${plugins[0]}` },
-            { text: "Alternatives", action: `plugin_alternatives_${plugins[0]}` },
-            { text: "Configuration help", action: `plugin_config_${plugins[0]}` }
-        ];
-    }
-
-    generateGeneralOptions() {
-        return [
-            { text: "Server plans", action: "topic_plans" },
-            { text: "Plugin help", action: "topic_plugins" },
-            { text: "Troubleshooting", action: "topic_support" }
-        ];
-    }
-
-    checkKnowledgeBase(userInput) {
-        const knowledgeTopics = Object.keys(this.serverKnowledge);
-        const inputText = userInput.clean;
-
-        for (const topic of knowledgeTopics) {
-            if (inputText.includes(topic)) {
-                return this.generateKnowledgeResponse(topic);
-            }
-        }
-
-        if (userInput.intent === 'plans') {
-            return this.generateKnowledgeResponse('plans');
-        }
-        
-        if (userInput.intent === 'features') {
-            return this.generateKnowledgeResponse('features');
-        }
-        
-        if (userInput.intent === 'support') {
-            return this.generateKnowledgeResponse('commonIssues');
-        }
-        
-        return null;
-    }
-
-    generateKnowledgeResponse(topic) {
-        const knowledge = this.serverKnowledge[topic];
-        if (!knowledge) return null;
-        
-        let response = "";
-        
-        switch (topic) {
-            case "plans":
-                response = `📊 ${knowledge.description}\n\n`;
-                knowledge.tiers.forEach(plan => {
-                    response += `🔹 ${plan.name}: ${plan.price}\n`;
-                    response += `   ${plan.specs}\n`;
-                    response += `   Best for: ${plan.bestFor}\n\n`;
-                });
-                response += `💡 ${knowledge.notes}`;
-                break;
-                
-            case "features":
-                response = "🌟 MCZIE Hosting Features:\n";
-                response += knowledge.features.map(f => `✔ ${f}`).join("\n");
-                response += `\n\n${this.getMoodResponse()} Need details on any feature?`;
-                break;
-                
-            case "commonIssues":
-                response = "🔧 Common Server Solutions:\n";
-                response += `🛠️ Setup: ${knowledge.setup}\n\n`;
-                response += `⚡ Performance: ${knowledge.performance}\n\n`;
-                response += `🌐 Connection: ${knowledge.connection}`;
-                break;
-                
-            default:
-                return null;
         }
         
         return response;
@@ -567,6 +516,160 @@ initializePersonalityMatrix() {
             solution: "I couldn't identify this specific error. Please contact support with the full log.",
             additionalHelp: "Would you like me to connect you to live support?"
         };
+    }
+
+    generateFollowUpOptions(intent) {
+        const optionsMap = {
+            plans: [
+                { text: "Compare all plans", action: "show_all_plans" },
+                { text: "Best plan for modpacks", action: "plan_modpacks" },
+                { text: "Budget options", action: "plan_budget" }
+            ],
+            plugins: [
+                { text: "Performance plugins", action: "plugins_performance" },
+                { text: "Economy plugins", action: "plugins_economy" },
+                { text: "Plugin conflicts", action: "plugin_conflicts" }
+            ],
+            support: [
+                { text: "Server won't start", action: "troubleshoot_startup" },
+                { text: "Lag issues", action: "troubleshoot_lag" },
+                { text: "Connection problems", action: "troubleshoot_connection" }
+            ],
+            default: [
+                { text: "Tell me more", action: "continue" },
+                { text: "Something else", action: "change_topic" },
+                { text: "Contact support", action: "contact_support" }
+            ]
+        };
+        
+        return optionsMap[intent] || optionsMap.default;
+    }
+
+    generatePluginOptions(plugins) {
+        if (plugins.length === 0) return this.generateFollowUpOptions('plugins');
+        
+        return [
+            { text: "Compatibility info", action: `plugin_compat_${plugins[0]}` },
+            { text: "Alternatives", action: `plugin_alternatives_${plugins[0]}` },
+            { text: "Configuration help", action: `plugin_config_${plugins[0]}` }
+        ];
+    }
+
+    generateGeneralOptions() {
+        return [
+            { text: "Server plans", action: "topic_plans" },
+            { text: "Plugin help", action: "topic_plugins" },
+            { text: "Troubleshooting", action: "topic_support" }
+        ];
+    }
+
+    checkKnowledgeBase(userInput) {
+        const knowledgeTopics = Object.keys(this.serverKnowledge);
+        const inputText = userInput.clean;
+
+        for (const topic of knowledgeTopics) {
+            if (inputText.includes(topic)) {
+                return this.generateKnowledgeResponse(topic);
+            }
+        }
+
+        if (userInput.intent === 'plans') {
+            return this.generateKnowledgeResponse('plans');
+        }
+        
+        if (userInput.intent === 'features') {
+            return this.generateKnowledgeResponse('features');
+        }
+        
+        if (userInput.intent === 'support') {
+            return this.generateKnowledgeResponse('commonIssues');
+        }
+        
+        return null;
+    }
+
+    loadServerKnowledge() {
+        return {
+            "plans": {
+                description: "We offer a range of hosting plans to suit your needs:",
+                tiers: [
+                    {
+                        name: "Budget Plan",
+                        price: "₱80/month",
+                        specs: "Xeon E5-2650 V4 • DDR4 2133Mhz",
+                        bestFor: "Small servers and beginners"
+                    },
+                    {
+                        name: "Enterprise Plan",
+                        price: "₱130/month",
+                        specs: "Xeon E5-2698 V3 • DDR4 2666Mhz",
+                        bestFor: "Medium-sized communities"
+                    },
+                    {
+                        name: "Professional Plan",
+                        price: "₱250/month",
+                        specs: "Ryzen 7 2700X • DDR4 3200Mhz",
+                        bestFor: "Large networks and modpacks"
+                    }
+                ],
+                notes: "All plans include 24/7 support, DDoS protection, and free migrations!"
+            },
+            "features": {
+                description: "Our hosting comes with powerful features:",
+                features: [
+                    "Instant setup",
+                    "99.9% uptime guarantee",
+                    "Free SSL certificates",
+                    "One-click modpack installs",
+                    "Full server access",
+                    "Daily backups",
+                    "Multicraft control panel",
+                    "Global datacenter locations"
+                ]
+            },
+            "commonIssues": {
+                setup: "Ensure you've uploaded your server files correctly and set the right JAR file in your control panel.",
+                performance: "Try pre-generating chunks with Chunky, optimize entities with ClearLag, and use Spark to identify performance bottlenecks.",
+                connection: "Check your server IP and port, ensure the server is running, and verify that your firewall isn't blocking connections."
+            }
+        };
+    }
+
+    generateKnowledgeResponse(topic) {
+        const knowledge = this.serverKnowledge[topic];
+        if (!knowledge) return null;
+        
+        let response = "";
+        
+        switch (topic) {
+            case "plans":
+                response = `📊 ${knowledge.description}\n\n`;
+                knowledge.tiers.forEach(plan => {
+                    response += `🔹 ${plan.name}: ${plan.price}\n`;
+                    response += `   ${plan.specs}\n`;
+                    response += `   Best for: ${plan.bestFor}\n\n`;
+                });
+                response += `💡 ${knowledge.notes}`;
+                break;
+                
+            case "features":
+                response = "🌟 MCZIE Hosting Features:\n";
+                response += knowledge.features.map(f => `✔ ${f}`).join("\n");
+                response += `\n\n${this.getMoodResponse()} Need details on any feature?`;
+                break;
+                
+            case "commonIssues":
+                response = "🔧 Common Server Solutions:\n";
+                response += `🛠️ Setup: ${knowledge.setup}\n\n`;
+                response += `⚡ Performance: ${knowledge.performance}\n\n`;
+                response += `🌐 Connection: ${knowledge.connection}`;
+                break;
+                
+            default:
+                return null;
+        }
+        
+        return response;
     }
 
     detectLanguage(text) {
@@ -687,6 +790,32 @@ initializePersonalityMatrix() {
         return null;
     }
 
+    loadMemory() {
+        try {
+            const saved = localStorage.getItem('quantumAI_Memory');
+            if (saved) {
+                this.memory = JSON.parse(saved);
+            }
+        } catch (e) {
+            console.error("Failed to load memory:", e);
+            this.memory = [];
+        }
+    }
+
+    saveMemory() {
+        try {
+            localStorage.setItem('quantumAI_Memory', JSON.stringify(this.memory));
+        } catch (e) {
+            console.error("Failed to save memory:", e);
+        }
+    }
+
+    updateMoodPeriodically() {
+        setInterval(() => {
+            this.mood = this.getRandomMood();
+        }, 3600000);
+    }
+
     toggleMaintenanceMode(enable) {
         this.maintenanceMode = enable;
         if (enable) {
@@ -733,12 +862,6 @@ initializePersonalityMatrix() {
     }
 }
 
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = QuantumAI;
-} else {
-    window.QuantumAI = QuantumAI;
-}
-
 class MCZIEChatWidget {
     constructor() {
         this.isOpen = false;
@@ -747,6 +870,7 @@ class MCZIEChatWidget {
         this.messageHistory = [];
         this.typingTimeout = null;
         this.inactivityTimeout = null;
+        this.quantumAI = new QuantumAI();
         this.init();
     }
 
@@ -892,7 +1016,7 @@ class MCZIEChatWidget {
         if (sender === 'ai') {
             messageElement.innerHTML = `
                 <div class="message-avatar">
-                    <img src="/TestBotAi.png" alt="AI Avatar" onerror="this.src='/default-avatar.png'">
+                    <img src="/TestBotAi.png" alt="AI Avatar" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzZFOEVGQiI+PHBhdGggZD0iTTEyLDJBMywzIDAgMCwwIDksNUgxNUExLDEgMCAwLDAgMTIsMlpNOSw1QTMsMyAwIDAsMCA2LDJIM0ExLDEgMCAwLDAgMiwzVjIxQTEsMSAwIDAsMCAzLDIySDIxQTEsMSAwIDAsMCAyMiwyMVYzQTEsMSAwIDAsMCAyMSwySDE4QTMsMyAwIDAsMCAxNSw1SDEyTTcsMTJWN0gxN1YxMkg3TTcsMTRIMTdWMTlIN1YxNE03LDRWNUgxN1Y0SDdaIi8+PC9zdmc+'">
                 </div>
                 <div class="message-content">
                     <div class="message-text">${content}</div>
@@ -939,7 +1063,7 @@ class MCZIEChatWidget {
         
         this.typingTimeout = setTimeout(() => {
             this.hideTypingIndicator();
-            const response = this.generateResponse(message);
+            const response = this.generateAIResponse(message);
             this.addMessage('ai', response);
             
             if (!this.isOpen) {
@@ -957,13 +1081,20 @@ class MCZIEChatWidget {
         
         this.typingTimeout = setTimeout(() => {
             this.hideTypingIndicator();
-            const response = this.generateResponse(question);
+            const response = this.generateAIResponse(question);
             this.addMessage('ai', response);
             
             if (!this.isOpen) {
                 this.incrementUnreadCounter();
             }
         }, 800);
+    }
+
+    generateAIResponse(message) {
+        const processedInput = this.quantumAI.processUserInput(message);
+        const aiResponse = this.quantumAI.generateResponse(processedInput);
+        
+        return aiResponse.text;
     }
 
     showTypingIndicator() {
@@ -976,7 +1107,7 @@ class MCZIEChatWidget {
             typingElement.className = 'ai-message typing-message';
             typingElement.innerHTML = `
                 <div class="message-avatar">
-                    <img src="/TestBotAi.png" alt="AI Avatar" onerror="this.src='/default-avatar.png'">
+                    <img src="/TestBotAi.png" alt="AI Avatar" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzZFOEVGQiI+PHBhdGggZD0iTTEyLDJBMywzIDAgMCwwIDksNUgxNUExLDEgMCAwLDAgMTIsMlpNOSw1QTMsMyAwIDAsMCA2LDJIM0ExLDEgMCAwLDAgMiwzVjIxQTEsMSAwIDAsMCAzLDIySDIxQTEsMSAwIDAsMCAyMiwyMVYzQTEsMSAwIDAsMCAyMSwySDE4QTMsMyAwIDAsMCAxNSw1SDEyTTcsMTJWN0gxN1YxMkg3TTcsMTRIMTdWMTlIN1YxNE03LDRWNUgxN1Y0SDdaIi8+PC9zdmc+'">
                 </div>
                 <div class="message-content">
                     <div class="typing-indicator">
@@ -1001,171 +1132,6 @@ class MCZIEChatWidget {
             this.elements.typingIndicator.style.display = 'none';
         }
     }
-
-    // Full improved sync version with design + more plugins
-generateResponse(message) {
-    const cleanMsg = String(message ?? '').trim();
-    const lower = cleanMsg.toLowerCase();
-    const randomFrom = arr => arr[Math.floor(Math.random() * arr.length)];
-  
-    // === Greetings ===
-    if (lower.includes("hi") || lower.includes("hello") || lower.includes("hey") || lower.includes("greetings")) {
-      const greetings = [
-        `<div class="chat-response greeting">👋 <strong>Hello there!</strong><br>How can I assist you with your Minecraft server today?</div>`,
-        `<div class="chat-response greeting">😊 <strong>Hey!</strong><br>What do you need help with?</div>`,
-        `<div class="chat-response greeting">🚀 <strong>Hi there!</strong><br>Need plugin suggestions or server setup help?</div>`,
-        `<div class="chat-response greeting">🏰 <strong>Greetings, adventurer!</strong><br>How can I help with your server?</div>`,
-        `<div class="chat-response greeting">🤙 <strong>Yo!</strong><br>What's up? Need anything for your Minecraft world?</div>`,
-        `<div class="chat-response greeting">🎮 <strong>Hey there!</strong><br>Ready to make your server awesome? Let me know how I can help!</div>`
-      ];
-      return randomFrom(greetings);
-    }
-  
-    // === Pricing ===
-    if (["plan","price","cost","package","tier","pricing"].some(k=>lower.includes(k))) {
-      return `<div class="chat-response pricing">
-        <h3>💎 Hosting Plans</h3>
-        <div class="plan-option"><strong>Budget Plan</strong> — <span class="price">₱80/month</span><br>
-            <small>Xeon E5-2650 V4 • DDR4 2133Mhz</small></div>
-        <div class="plan-option"><strong>Enterprise Plan</strong> — <span class="price">₱130/month</span><br>
-            <small>Xeon E5-2698 V3 • DDR4 2666Mhz</small></div>
-        <div class="plan-option"><strong>Professional Plan</strong> — <span class="price">₱250/month</span><br>
-            <small>Ryzen 7 2700X • DDR4 3200Mhz</small></div>
-        <a href="/available/Pricing-Plans.html" class="btn-in-chat">📋 Explore All Plans</a>
-      </div>`;
-    }
-  
-    // === Setup ===
-    if (["setup","install","start","begin","configure"].some(k=>lower.includes(k))) {
-      return `<div class="chat-response setup">
-        <h3>⚡ Quick Setup Guide</h3>
-        <ol>
-          <li>📧 Check your email for login credentials.</li>
-          <li>🔑 Access your <a href="https://srv.mcziehost.fun:8443" target="_blank">control panel</a>.</li>
-          <li>📖 Follow our <a href="/index.html">detailed setup guide</a>.</li>
-        </ol>
-        <button class="quick-action-btn" data-question="I need setup help">🆘 Need Setup Help</button>
-      </div>`;
-    }
-  
-    // === Performance Plugins ===
-    if (["performance","lag","optimize"].some(k=>lower.includes(k))) {
-      return `<div class="chat-response performance">
-        <h3>🚀 Performance Optimization</h3>
-        <ul>
-          <li>🛠️ <a href="https://www.spigotmc.org/resources/spark.57242/" target="_blank"><strong>Spark</strong></a> — Profiling & monitoring</li>
-          <li>🧹 <a href="https://www.spigotmc.org/resources/clearlagg.68271/" target="_blank"><strong>ClearLag</strong></a> — Reduce entity lag</li>
-          <li>🌍 <a href="https://www.spigotmc.org/resources/chunky.81534/" target="_blank"><strong>Chunky</strong></a> — World pre-loading</li>
-          <li>📦 <a href="https://www.spigotmc.org/resources/farm-limiter.1419/" target="_blank"><strong>FarmLimiter</strong></a> — Reduce mob farms impact</li>
-        </ul>
-        <small>💡 Use <code>/spark sampler</code> to detect issues.</small>
-      </div>`;
-    }
-  
-    // === Economy Plugins ===
-    if (["economy","money","shop","market","store"].some(k=>lower.includes(k))) {
-      return `<div class="chat-response economy">
-        <h3>💰 Economy Plugins</h3>
-        <ul>
-          <li>🏦 <a href="https://www.spigotmc.org/resources/essentialsx.9089/" target="_blank"><strong>EssentialsX</strong></a> — Core commands</li>
-          <li>💳 <a href="https://www.spigotmc.org/resources/vault.34315/" target="_blank"><strong>Vault</strong></a> — Economy API</li>
-          <li>🛍️ <a href="https://www.spigotmc.org/resources/shopguiplus.6515/" target="_blank"><strong>ShopGUIPlus</strong></a> — GUI shops</li>
-          <li>📦 <a href="https://www.spigotmc.org/resources/chestshop.51856/" target="_blank"><strong>ChestShop</strong></a> — Sign-based shops</li>
-          <li>💸 <a href="https://www.spigotmc.org/resources/jobs-reborn.4216/" target="_blank"><strong>Jobs Reborn</strong></a> — Earn money via jobs</li>
-        </ul>
-      </div>`;
-    }
-  
-    // === Protection Plugins ===
-    if (["protection","anti-grief","security","grief"].some(k=>lower.includes(k))) {
-      return `<div class="chat-response protection">
-        <h3>🛡️ Protection & Security</h3>
-        <ul>
-          <li>🔒 <a href="https://www.spigotmc.org/resources/worldguard.18911/" target="_blank"><strong>WorldGuard</strong></a> — Area protection</li>
-          <li>📜 <a href="https://www.spigotmc.org/resources/coreprotect.8631/" target="_blank"><strong>CoreProtect</strong></a> — Rollbacks/logging</li>
-          <li>🏡 <a href="https://www.spigotmc.org/resources/griefprevention.1884/" target="_blank"><strong>GriefPrevention</strong></a> — Land claiming</li>
-          <li>👮 <a href="https://www.spigotmc.org/resources/lockettepro.20427/" target="_blank"><strong>LockettePro</strong></a> — Chest/door locking</li>
-        </ul>
-      </div>`;
-    }
-  
-    // === PvP Plugins ===
-    if (["pvp","combat","battle","fight"].some(k=>lower.includes(k))) {
-      return `<div class="chat-response pvp">
-        <h3>⚔️ PvP & Combat</h3>
-        <ul>
-          <li>🏹 <a href="https://www.spigotmc.org/resources/duels.20171/" target="_blank"><strong>Duels</strong></a> — 1v1 battles</li>
-          <li>⚔️ <a href="https://www.spigotmc.org/resources/advancedclans.71765/" target="_blank"><strong>AdvancedClans</strong></a> — Clan system</li>
-          <li>🛡️ <a href="https://www.spigotmc.org/resources/battle-arena.2164/" target="_blank"><strong>BattleArena</strong></a> — PvP minigames</li>
-        </ul>
-      </div>`;
-    }
-  
-    // === Fun Plugins ===
-    if (["fun","customization","cosmetic","cool"].some(k=>lower.includes(k))) {
-      return `<div class="chat-response fun">
-        <h3>🎮 Fun & Customization</h3>
-        <ul>
-          <li>✨ <a href="https://www.spigotmc.org/resources/decentholograms.83757/" target="_blank"><strong>DecentHolograms</strong></a> — Floating text</li>
-          <li>🎨 <a href="https://www.spigotmc.org/resources/itemsadder.73355/" target="_blank"><strong>ItemsAdder</strong></a> — Custom items</li>
-          <li>🐉 <a href="https://www.spigotmc.org/resources/mythicmobs.5702/" target="_blank"><strong>MythicMobs</strong></a> — Custom mobs</li>
-          <li>🔥 <a href="https://www.spigotmc.org/resources/citizens.13811/" target="_blank"><strong>Citizens</strong></a> — Custom NPCs</li>
-          <li>🎆 <a href="https://www.spigotmc.org/resources/ultra-cosmetics.10905/" target="_blank"><strong>UltraCosmetics</strong></a> — Gadgets & cosmetics</li>
-        </ul>
-      </div>`;
-    }
-  
-    // === Minigames ===
-    if (["minigame","game","arcade","funny"].some(k=>lower.includes(k))) {
-      return `<div class="chat-response minigames">
-        <h3>🎯 Minigame Plugins</h3>
-        <ul>
-          <li>🧱 <a href="https://www.spigotmc.org/resources/bedwars1058.50942/" target="_blank"><strong>BedWars1058</strong></a></li>
-          <li>⛏️ <a href="https://www.spigotmc.org/resources/skywarsreloaded.3796/" target="_blank"><strong>SkyWarsReloaded</strong></a></li>
-          <li>🏹 <a href="https://www.spigotmc.org/resources/hungergames.65942/" target="_blank"><strong>HungerGames</strong></a></li>
-          <li>🎲 <a href="https://www.spigotmc.org/resources/blockparty.28492/" target="_blank"><strong>BlockParty</strong></a></li>
-        </ul>
-      </div>`;
-    }
-  
-    // === Errors ===
-    if (["error","crash","issue","problem","fix","help"].some(k=>lower.includes(k))) {
-      return `<div class="chat-response error">
-        <h3>🛠️ Server Issue Help</h3>
-        <p>I can help analyze errors:</p>
-        <ol>
-          <li>📂 Share your error log using the upload button</li>
-          <li>🕒 Describe when the issue happens</li>
-          <li>🖥️ Tell me your server version</li>
-        </ol>
-        <button class="quick-action-btn" data-question="My server won't start">🚨 Startup Problems</button>
-        <button class="quick-action-btn" data-question="My server is lagging">🐢 Lag Issues</button>
-      </div>`;
-    }
-  
-    // === Thanks ===
-    if (["thank","thanks","appreciate","helpful"].some(k=>lower.includes(k))) {
-      const thanksResponses = [
-        `<div class="chat-response thanks">😊 You're welcome! Happy to help with your Minecraft server!</div>`,
-        `<div class="chat-response thanks">🎮 No problem at all! Let me know if you need anything else.</div>`,
-        `<div class="chat-response thanks">⚡ Glad I could help! Come back anytime with server questions!</div>`,
-        `<div class="chat-response thanks">🏰 My pleasure! Enjoy your enhanced server experience!</div>`
-      ];
-      return randomFrom(thanksResponses);
-    }
-  
-    // === Fallback to AI ===
-    const processedInput = this.quantumAI?.processUserInput
-      ? this.quantumAI.processUserInput(message)
-      : message;
-  
-    const aiResponse = this.quantumAI?.generateResponse
-      ? this.quantumAI.generateResponse(processedInput)
-      : null;
-  
-    return `<div class="chat-response fallback">${aiResponse?.text || "🤔 Hmm, I didn’t quite catch that. Could you rephrase your question?"}</div>`;
-  }
-  
 
     scrollToBottom() {
         if (this.elements.chatMessages) {
