@@ -1,4 +1,4 @@
-// QuantumAI Class
+// Enhanced QuantumAI Class with better response capabilities
 class QuantumAI {
     constructor() {
         this.name = "MCZIE Quantum Assistant";
@@ -42,7 +42,12 @@ class QuantumAI {
             "ClearLag": { requires: "Spigot/Paper", conflicts: [] },
             "Chunky": { requires: "Paper 1.13+", conflicts: [] },
             "WorldGuard": { requires: "Bukkit", conflicts: ["GriefPrevention"] },
-            "LuckPerms": { requires: "Java 8+", conflicts: ["PermissionsEx"] }
+            "LuckPerms": { requires: "Java 8+", conflicts: ["PermissionsEx"] },
+            "EssentialsX": { requires: "Spigot/Paper", conflicts: [] },
+            "Vault": { requires: "Bukkit", conflicts: [] },
+            "ShopGUIPlus": { requires: "Vault", conflicts: [] },
+            "DecentHolograms": { requires: "Spigot 1.13+", conflicts: [] },
+            "ItemsAdder": { requires: "Spigot 1.14+", conflicts: [] }
         };
     }
 
@@ -131,15 +136,20 @@ class QuantumAI {
         
         const lowerText = text.toLowerCase();
         
-        if (/hello|hi|hey|greetings/i.test(lowerText)) return 'greeting';
-        if (/bye|exit|quit|goodbye/i.test(lowerText)) return 'farewell';
-        if (/plan|pricing|price|cost|tier/i.test(lowerText)) return 'plans';
-        if (/plugin|mod|addon|extension/i.test(lowerText)) return 'plugins';
-        if (/error|issue|problem|fix|help|support/i.test(lowerText)) return 'support';
-        if (/feature|what can you do|capability/i.test(lowerText)) return 'features';
-        if (/how to|tutorial|guide|steps/i.test(lowerText)) return 'tutorial';
-        if (/thank|thanks|appreciate/i.test(lowerText)) return 'gratitude';
-        if (/minecraft|server|hosting/i.test(lowerText)) return 'minecraft';
+        if (/hello|hi|hey|greetings|howdy|yo|sup/i.test(lowerText)) return 'greeting';
+        if (/bye|exit|quit|goodbye|see ya|farewell/i.test(lowerText)) return 'farewell';
+        if (/plan|pricing|price|cost|tier|package|subscription|payment/i.test(lowerText)) return 'plans';
+        if (/plugin|mod|addon|extension|bukkit|spigot|paper/i.test(lowerText)) return 'plugins';
+        if (/error|issue|problem|fix|help|support|trouble|bug|broken|not working/i.test(lowerText)) return 'support';
+        if (/feature|what can you do|capability|ability|function/i.test(lowerText)) return 'features';
+        if (/how to|tutorial|guide|steps|instructions|set up|configure/i.test(lowerText)) return 'tutorial';
+        if (/thank|thanks|appreciate|grateful|thx|ty/i.test(lowerText)) return 'gratitude';
+        if (/minecraft|server|hosting|mc|vps|dedicated/i.test(lowerText)) return 'minecraft';
+        if (/ram|memory|cpu|processor|storage|disk|bandwidth|resource/i.test(lowerText)) return 'resources';
+        if (/backup|restore|save|data protection/i.test(lowerText)) return 'backup';
+        if (/ddos|attack|protection|security|firewall|secure/i.test(lowerText)) return 'security';
+        if (/modpack|mods|ftb|curseforge|technic/i.test(lowerText)) return 'modpacks';
+        if (/latency|ping|lag|tps|performance|slow|speed/i.test(lowerText)) return 'performance';
         
         return 'unknown';
     }
@@ -147,9 +157,10 @@ class QuantumAI {
     extractEntities(text) {
         const entities = {
             versions: text.match(/(1\.\d{1,2}(\.\d{1,2})?)|(java\s*\d+)/gi) || [],
-            plugins: text.match(/\b(spark|worldguard|essentials|vault|clearlag|chunky|luckperms|itemsadder)\b/gi) || [],
-            resources: text.match(/\b(ram|cpu|storage|disk|bandwidth)\b/gi) || [],
-            quantities: text.match(/\b(\d+)\s*(gb|mb|players|slots)\b/gi) || []
+            plugins: text.match(/\b(spark|worldguard|essentials|vault|clearlag|chunky|luckperms|itemsadder|shopguiplus|coreprotect|griefprevention|viaversion|protocolib|placeholderapi|mythicmobs|modelengine|decentholograms)\b/gi) || [],
+            resources: text.match(/\b(ram|cpu|storage|disk|bandwidth|ssd|hard drive)\b/gi) || [],
+            quantities: text.match(/\b(\d+)\s*(gb|mb|players|slots|ghz|mhz)\b/gi) || [],
+            modpacks: text.match(/\b(ftb|curseforge|technic|rlcraft|skyfactory|sevtech|allthemods|valhelsia)\b/gi) || []
         };
         
         return entities;
@@ -200,7 +211,7 @@ class QuantumAI {
         if (!text) return 'low';
         
         const lowerText = text.toLowerCase();
-        if (/(urgent|emergency|immediately|asap|right now|broken|down|not working)/i.test(lowerText)) {
+        if (/(urgent|emergency|immediately|asap|right now|broken|down|not working|critical)/i.test(lowerText)) {
             return 'high';
         } else if (/(soon|today|quick|fast|help|issue|problem)/i.test(lowerText)) {
             return 'medium';
@@ -211,18 +222,20 @@ class QuantumAI {
     analyzeSentiment(text) {
         if (!text) return 0;
         
-        const positive = ['great', 'awesome', 'helpful', 'thanks', 'love', 'perfect', 'good'];
-        const negative = ['bad', 'broken', 'sucks', 'hate', 'terrible', 'awful', 'disappointed'];
+        const positive = ['great', 'awesome', 'helpful', 'thanks', 'love', 'perfect', 'good', 'excellent', 'fantastic', 'wonderful', 'amazing'];
+        const negative = ['bad', 'broken', 'sucks', 'hate', 'terrible', 'awful', 'disappointed', 'frustrated', 'angry', 'upset', 'poor'];
         
         let score = 0;
         const lowerText = text.toLowerCase();
         
         positive.forEach(word => {
-            if (lowerText.includes(word)) score += 1;
+            const regex = new RegExp(`\\b${word}\\b`, 'i');
+            if (regex.test(lowerText)) score += 1;
         });
         
         negative.forEach(word => {
-            if (lowerText.includes(word)) score -= 1;
+            const regex = new RegExp(`\\b${word}\\b`, 'i');
+            if (regex.test(lowerText)) score -= 1;
         });
 
         const wordCount = text.split(/\s+/).length;
@@ -279,6 +292,47 @@ class QuantumAI {
                     ]
                 };
             }
+        }
+
+        // Handle other specific intents
+        if (userInput.intent === 'resources') {
+            return {
+                text: this.handleResourceQuery(userInput),
+                type: "resources",
+                options: this.generateFollowUpOptions('resources')
+            };
+        }
+
+        if (userInput.intent === 'modpacks') {
+            return {
+                text: this.handleModpackQuery(userInput),
+                type: "modpacks",
+                options: this.generateFollowUpOptions('modpacks')
+            };
+        }
+
+        if (userInput.intent === 'performance') {
+            return {
+                text: this.handlePerformanceQuery(userInput),
+                type: "performance",
+                options: this.generateFollowUpOptions('performance')
+            };
+        }
+
+        if (userInput.intent === 'security') {
+            return {
+                text: this.handleSecurityQuery(userInput),
+                type: "security",
+                options: this.generateFollowUpOptions('security')
+            };
+        }
+
+        if (userInput.intent === 'backup') {
+            return {
+                text: this.handleBackupQuery(userInput),
+                type: "backup",
+                options: this.generateFollowUpOptions('backup')
+            };
         }
 
         return {
@@ -345,12 +399,36 @@ class QuantumAI {
                     response += `\n- Conflicts with: ${info.conflicts.join(', ')}`;
                 }
                 
+                // Add plugin description
+                const pluginDescriptions = {
+                    "Spark": "A performance profiling plugin that helps you identify lag sources on your server.",
+                    "ClearLag": "Clears dropped items, mobs, and other entities to reduce server lag.",
+                    "WorldGuard": "Protects areas of your world from griefing and unwanted changes.",
+                    "LuckPerms": "A permissions plugin that allows you to manage user groups and permissions.",
+                    "EssentialsX": "Adds essential commands and features to your Minecraft server.",
+                    "Vault": "Provides a compatibility layer between economy, permission, and chat plugins.",
+                    "ShopGUIPlus": "A shop plugin that allows players to buy and sell items through GUIs.",
+                    "CoreProtect": "Logs block placements and breaks, allowing you to roll back griefing.",
+                    "GriefPrevention": "Helps prevent griefing by allowing players to claim land.",
+                    "ViaVersion": "Allows players with newer Minecraft versions to connect to your server.",
+                    "ProtocolLib": "Enables other plugins to access Minecraft's network protocol.",
+                    "PlaceholderAPI": "Allows plugins to provide placeholders for other plugins to use.",
+                    "MythicMobs": "Lets you create custom mobs with special abilities and equipment.",
+                    "ModelEngine": "Allows you to create custom entity models for your server.",
+                    "DecentHolograms": "Displays holographic text in your world for information or decoration.",
+                    "ItemsAdder": "Adds custom items, blocks, and resources to your server."
+                };
+                
+                if (pluginDescriptions[plugin]) {
+                    response += `\n- Description: ${pluginDescriptions[plugin]}`;
+                }
+                
                 return response;
             } else {
-                return `I don't have detailed information about ${plugin}, but it's a popular choice.`;
+                return `I don't have detailed information about ${plugin}, but it's a popular choice for Minecraft servers. Would you like general plugin advice?`;
             }
         } else {
-            const serverTypeMatch = userInput.clean.match(/(survival|creative|minigames|rpg|pvp)/i);
+            const serverTypeMatch = userInput.clean.match(/(survival|creative|minigames|rpg|pvp|skyblock|factions|bedwars|prison)/i);
             const serverType = serverTypeMatch ? serverTypeMatch[0] : 'server';
             
             return this.recommendPlugins(serverType, this.detectPluginNeeds(userInput));
@@ -360,11 +438,14 @@ class QuantumAI {
     detectPluginNeeds(userInput) {
         const needs = [];
         
-        if (/\b(economy|money|shop|sell)\b/i.test(userInput.clean)) needs.push('economy');
-        if (/\b(protect|grief|claim)\b/i.test(userInput.clean)) needs.push('protection');
-        if (/\b(lag|performance|tps|optimize)\b/i.test(userInput.clean)) needs.push('performance');
-        if (/\b(fun|cosmetic|hologram|mobs)\b/i.test(userInput.clean)) needs.push('fun');
-        if (/\b(permission|rank|prefix)\b/i.test(userInput.clean)) needs.push('utility');
+        if (/\b(economy|money|shop|sell|buy|market)/i.test(userInput.clean)) needs.push('economy');
+        if (/\b(protect|grief|claim|security|guard)/i.test(userInput.clean)) needs.push('protection');
+        if (/\b(lag|performance|tps|optimize|speed|fast)/i.test(userInput.clean)) needs.push('performance');
+        if (/\b(fun|cosmetic|hologram|mobs|pet|game)/i.test(userInput.clean)) needs.push('fun');
+        if (/\b(permission|rank|prefix|group|admin)/i.test(userInput.clean)) needs.push('utility');
+        if (/\b(chat|message|emoji|color)/i.test(userInput.clean)) needs.push('chat');
+        if (/\b(teleport|warp|home|spawn)/i.test(userInput.clean)) needs.push('teleportation');
+        if (/\b(quest|mission|objective|task)/i.test(userInput.clean)) needs.push('quests');
         
         return needs.length > 0 ? needs : ['performance', 'utility'];
     }
@@ -402,7 +483,13 @@ class QuantumAI {
             "Vault": "economy and permissions API",
             "ShopGUIPlus": "GUI-based shopping system",
             "DecentHolograms": "hologram display system",
-            "MythicMobs": "custom mobs and bosses"
+            "MythicMobs": "custom mobs and bosses",
+            "CoreProtect": "block logging and rollback",
+            "GriefPrevention": "land claiming and protection",
+            "ViaVersion": "cross-version compatibility",
+            "ProtocolLib": "protocol access for plugins",
+            "PlaceholderAPI": "placeholder system for plugins",
+            "ModelEngine": "custom entity models"
         };
         
         const formattedRecs = recommendations.map(p => {
@@ -410,8 +497,8 @@ class QuantumAI {
         });
 
         return formattedRecs.length > 0 
-            ? `For your ${serverType} server, consider these plugins: ${formattedRecs.join(", ")}`
-            : "I couldn't find specific plugin recommendations. Could you describe what you're trying to achieve?";
+            ? `For your ${serverType} server, I recommend these plugins: ${formattedRecs.join(", ")}. Would you like more details on any of these?`
+            : "I couldn't find specific plugin recommendations. Could you describe what you're trying to achieve with your server?";
     }
 
     handleTroubleshooting(userInput) {
@@ -469,6 +556,14 @@ class QuantumAI {
             "Mod rejection": {
                 solution: "Ensure all mods are for the correct Minecraft version",
                 action: "Would you like help checking mod compatibility?"
+            },
+            "Maximum number of players reached": {
+                solution: "Increase the max-players setting in server.properties",
+                action: "Need help adjusting server settings?"
+            },
+            "Unknown command": {
+                solution: "Check if the required plugin is installed and enabled",
+                action: "Would you like help troubleshooting plugin commands?"
             }
         };
 
@@ -498,6 +593,14 @@ class QuantumAI {
             "login": {
                 solution: "Login issues often relate to authentication. Check your online-mode setting.",
                 action: "Need help with authentication setup?"
+            },
+            "disk": {
+                solution: "You may be running out of disk space. Try clearing old backups or logs.",
+                action: "Would you like help managing server storage?"
+            },
+            "plugin": {
+                solution: "A plugin might be causing this issue. Try disabling plugins one by one to identify the problem.",
+                action: "Need help troubleshooting plugin conflicts?"
             }
         };
 
@@ -518,6 +621,155 @@ class QuantumAI {
         };
     }
 
+    handleResourceQuery(userInput) {
+        const entities = userInput.entities;
+        let response = "";
+        
+        if (entities.quantities.length > 0) {
+            response = "Based on your server needs, I recommend:\n";
+            
+            if (userInput.clean.includes('ram') || userInput.clean.includes('memory')) {
+                response += "- For modpacks or large player counts, consider 8GB+ RAM\n";
+                response += "- For medium-sized servers, 4-6GB should suffice\n";
+                response += "- For small servers, 2-3GB is usually enough\n";
+            }
+            
+            if (userInput.clean.includes('cpu')) {
+                response += "- Look for high clock speed (3.0GHz+) for best performance\n";
+                response += "- More cores help with handling multiple tasks simultaneously\n";
+            }
+            
+            if (userInput.clean.includes('storage')) {
+                response += "- SSD storage significantly improves world loading times\n";
+                response += "- Plan for at least 10-20GB for the server + backups\n";
+            }
+            
+            response += "\nOur hosting plans offer scalable resources to match your needs.";
+        } else {
+            response = "When considering resources for your Minecraft server:\n\n";
+            response += "🔹 RAM: Affects how many players and mods you can support\n";
+            response += "🔹 CPU: Determines tick performance and calculation speed\n";
+            response += "🔹 Storage: SSD is recommended for faster world loading\n";
+            response += "🔹 Bandwidth: Important for player connections and downloads\n\n";
+            response += "How many players are you expecting, and will you use mods?";
+        }
+        
+        return response;
+    }
+
+    handleModpackQuery(userInput) {
+        const entities = userInput.entities;
+        let response = "";
+        
+        if (entities.modpacks.length > 0) {
+            const modpack = entities.modpacks[0].toLowerCase();
+            
+            if (modpack.includes('ftb') || modpack.includes('feedthebeast')) {
+                response = "For FTB modpacks, I recommend:\n";
+                response += "- Allocate at least 6-8GB RAM\n";
+                response += "- Use Java 17 for newer versions\n";
+                response += "- Pre-generate chunks to reduce lag\n";
+                response += "- Consider using Spark to monitor performance\n";
+            } else if (modpack.includes('rlcraft')) {
+                response = "For RLCraft, I recommend:\n";
+                response += "- Allocate at least 6GB RAM\n";
+                response += "- Use Java 8\n";
+                response += "- Be prepared for difficulty spikes!\n";
+                response += "- Regular backups are advised\n";
+            } else if (modpack.includes('skyfactory') || modpack.includes('skyblock')) {
+                response = "For SkyFactory or skyblock modpacks:\n";
+                response += "- 4-6GB RAM is usually sufficient\n";
+                response += "- CPU performance is key for automation\n";
+                response += "- Consider ClearLag for item management\n";
+            } else {
+                response = `For ${entities.modpacks[0]} modpacks, I recommend:\n`;
+                response += "- Check the modpack's specific requirements\n";
+                response += "- Allocate more RAM than vanilla (usually 4-8GB)\n";
+                response += "- Use the recommended Java version\n";
+                response += "- Pre-generate chunks if it's a exploration-heavy pack\n";
+            }
+        } else {
+            response = "For modpack servers, I generally recommend:\n\n";
+            response += "🔹 Allocate more RAM than vanilla (typically 4-8GB)\n";
+            response += "🔹 Use the Java version recommended by the modpack\n";
+            response += "🔹 Pre-generate chunks to reduce lag during exploration\n";
+            response += "🔹 Use performance plugins like Spark and ClearLag\n";
+            response += "🔹 Regular backups are essential with mods\n\n";
+            response += "Which modpack are you interested in?";
+        }
+        
+        return response;
+    }
+
+    handlePerformanceQuery(userInput) {
+        let response = "To improve server performance:\n\n";
+        
+        response += "🔹 Use Spark to identify lag sources: https://spark.lucko.me/\n";
+        response += "🔹 Pre-generate chunks with Chunky to reduce lag during exploration\n";
+        response += "🔹 Clear unnecessary entities with ClearLag\n";
+        response += "🔹 Optimize your server view-distance in server.properties\n";
+        response += "🔹 Consider using PaperMC for better performance than vanilla\n";
+        response += "🔹 Limit redstone clocks and complex machinery in spawn areas\n";
+        response += "🔹 Use a hosting provider with high-clock-speed CPUs\n\n";
+        
+        if (userInput.clean.includes('tps')) {
+            response += "If you're experiencing low TPS:\n";
+            response += "- Use /spark sampler to identify what's causing lag\n";
+            response += "- Check for excessive entities with /spark entities\n";
+            response += "- Look for redstone contraptions that might be running constantly\n";
+        }
+        
+        response += "Would you like more specific optimization advice?";
+        
+        return response;
+    }
+
+    handleSecurityQuery(userInput) {
+        let response = "For server security, I recommend:\n\n";
+        
+        response += "🔹 Use a plugin like CoreProtect to log and roll back griefing\n";
+        response += "🔹 Implement land claiming with GriefPrevention or WorldGuard\n";
+        response += "🔹 Set up proper permissions with LuckPerms\n";
+        response += "🔹 Use AuthMe for player authentication if needed\n";
+        response += "🔹 Keep your server software and plugins updated\n";
+        response += "🔹 Consider using a firewall or VPN for additional protection\n";
+        response += "🔹 Regular backups are your best defense against ransomware\n\n";
+        
+        if (userInput.clean.includes('grief') || userInput.clean.includes('griefer')) {
+            response += "To prevent griefing:\n";
+            response += "- Set up land claims so players can protect their builds\n";
+            response += "- Use CoreProtect to quickly roll back any damage\n";
+            response += "- Consider limiting certain items (like lava buckets)\n";
+        }
+        
+        response += "What specific security concern do you have?";
+        
+        return response;
+    }
+
+    handleBackupQuery(userInput) {
+        let response = "For server backups, I recommend:\n\n";
+        
+        response += "🔹 Use a plugin like CoreProtect for block-level backup and rollback\n";
+        response += "🔹 For full server backups, consider plugins like BackupGuard\n";
+        response += "🔹 Set up automated daily backups\n";
+        response += "🔹 Keep backups for at least 7-14 days\n";
+        response += "🔹 Store backups off-server if possible\n";
+        response += "🔹 Test your backups periodically to ensure they work\n\n";
+        
+        if (userInput.clean.includes('restore')) {
+            response += "To restore from a backup:\n";
+            response += "- Stop the server completely\n";
+            response += "- Replace the world files with your backup\n";
+            response += "- Start the server again\n";
+            response += "- For CoreProtect, use /co restore to roll back specific changes\n";
+        }
+        
+        response += "Would you like instructions for setting up a specific backup solution?";
+        
+        return response;
+    }
+
     generateFollowUpOptions(intent) {
         const optionsMap = {
             plans: [
@@ -534,6 +786,31 @@ class QuantumAI {
                 { text: "Server won't start", action: "troubleshoot_startup" },
                 { text: "Lag issues", action: "troubleshoot_lag" },
                 { text: "Connection problems", action: "troubleshoot_connection" }
+            ],
+            resources: [
+                { text: "RAM recommendations", action: "resource_ram" },
+                { text: "CPU requirements", action: "resource_cpu" },
+                { text: "Storage options", action: "resource_storage" }
+            ],
+            modpacks: [
+                { text: "FTB recommendations", action: "modpack_ftb" },
+                { text: "RLCraft setup", action: "modpack_rlcraft" },
+                { text: "Skyblock optimization", action: "modpack_skyblock" }
+            ],
+            performance: [
+                { text: "Reduce lag", action: "performance_lag" },
+                { text: "Improve TPS", action: "performance_tps" },
+                { text: "Optimize settings", action: "performance_settings" }
+            ],
+            security: [
+                { text: "Prevent griefing", action: "security_griefing" },
+                { text: "Set up permissions", action: "security_permissions" },
+                { text: "Player authentication", action: "security_auth" }
+            ],
+            backup: [
+                { text: "Automate backups", action: "backup_automate" },
+                { text: "Restore from backup", action: "backup_restore" },
+                { text: "Off-server storage", action: "backup_offsite" }
             ],
             default: [
                 { text: "Tell me more", action: "continue" },
@@ -862,6 +1139,7 @@ class QuantumAI {
     }
 }
 
+// MCZIEChatWidget Class
 class MCZIEChatWidget {
     constructor() {
         this.isOpen = false;
@@ -1016,7 +1294,7 @@ class MCZIEChatWidget {
         if (sender === 'ai') {
             messageElement.innerHTML = `
                 <div class="message-avatar">
-                    <img src="/TestBotAi.png" alt="AI Avatar" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzZFOEVGQiI+PHBhdGggZD0iTTEyLDJBMywzIDAgMCwwIDksNUgxNUExLDEgMCAwLDAgMTIsMlpNOSw1QTMsMyAwIDAsMCA2LDJIM0ExLDEgMCAwLDAgMiwzVjIxQTEsMSAwIDAsMCAzLDIySDIxQTEsMSAwIDAsMCAyMiwyMVYzQTEsMSAwIDAsMCAyMSwySDE4QTMsMyAwIDAsMCAxNSw1SDEyTTcsMTJWN0gxN1YxMkg3TTcsMTRIMTdWMTlIN1YxNE03LDRWNUgxN1Y0SDdaIi8+PC9zdmc+'">
+                    <img src="https://placehold.co/32x32/6e8efb/FFFFFF?text=Q" alt="AI Avatar">
                 </div>
                 <div class="message-content">
                     <div class="message-text">${content}</div>
@@ -1091,6 +1369,7 @@ class MCZIEChatWidget {
     }
 
     generateAIResponse(message) {
+        // Process the user input with QuantumAI
         const processedInput = this.quantumAI.processUserInput(message);
         const aiResponse = this.quantumAI.generateResponse(processedInput);
         
@@ -1107,7 +1386,7 @@ class MCZIEChatWidget {
             typingElement.className = 'ai-message typing-message';
             typingElement.innerHTML = `
                 <div class="message-avatar">
-                    <img src="/TestBotAi.png" alt="AI Avatar" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzZFOEVGQiI+PHBhdGggZD0iTTEyLDJBMywzIDAgMCwwIDksNUgxNUExLDEgMCAwLDAgMTIsMlpNOSw1QTMsMyAwIDAsMCA2LDJIM0ExLDEgMCAwLDAgMiwzVjIxQTEsMSAwIDAsMCAzLDIySDIxQTEsMSAwIDAsMCAyMiwyMVYzQTEsMSAwIDAsMCAyMSwySDE4QTMsMyAwIDAsMCAxNSw1SDEyTTcsMTJWN0gxN1YxMkg3TTcsMTRIMTdWMTlIN1YxNE03LDRWNUgxN1Y0SDdaIi8+PC9zdmc+'">
+                    <img src="https://placehold.co/32x32/6e8efb/FFFFFF?text=Q" alt="AI Avatar">
                 </div>
                 <div class="message-content">
                     <div class="typing-indicator">
@@ -1251,6 +1530,7 @@ class MCZIEChatWidget {
     }
 }
 
+// Initialize the chat widget when the DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     try {
         window.mczieChatWidget = new MCZIEChatWidget();
